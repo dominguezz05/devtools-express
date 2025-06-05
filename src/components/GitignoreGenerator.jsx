@@ -1,25 +1,22 @@
 // src/components/GitignoreGenerator.jsx
 import { useState, useEffect, useCallback } from "react";
 
-// --- Iconos (puedes reemplazarlos con tu librería de iconos o SVGs más elaborados) ---
+// --- Iconos ---
 const GenerateIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
     <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L1.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L24.5 5.25l-.813 2.846a4.5 4.5 0 00-3.09 3.09L18.25 12l-2.846.813a4.5 4.5 0 00-3.09 3.09L11.5 18.75l.813-2.846a4.5 4.5 0 003.09-3.09L18.25 12z" />
   </svg>
 );
-
 const LoadingSpinner = () => (
   <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
   </svg>
 );
-
 const CopyIconMini = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125V7.5m0 12.75v-7.5m0 0H3M9 7.5H6.375m0 0A2.25 2.25 0 0 1 8.625 3h6.75A2.25 2.25 0 0 1 17.625 5.25m0 2.25V11.25m0 0H21m-2.25 0H12.375M15 12H3.375" /></svg>;
 const DownloadIconMini = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>;
 const ClearIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L6.75 4.5m0 0L4.5 6.75M6.75 4.5l10.5 10.5m0 0L19.5 12m-2.25 2.25L15 9.75M4.5 19.5l2.25-2.25" /></svg>;
 // --- Fin Iconos ---
-
 
 function GitignoreGenerator() {
   const [languageInput, setLanguageInput] = useState("");
@@ -29,20 +26,21 @@ function GitignoreGenerator() {
   const [availableLanguages, setAvailableLanguages] = useState([]);
   const [copyStatus, setCopyStatus] = useState(''); // idle, copied, error
 
-  // Fetch available languages for datalist
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
-        const res = await fetch("https://www.toptal.com/developers/gitignore/api/list");
-        if (!res.ok) throw new Error("No se pudo cargar la lista de lenguajes.");
+        // CAMBIO AQUÍ: Usar el path del proxy
+        const res = await fetch("/toptal-api/list");
+        if (!res.ok) {
+            const errorText = await res.text(); // Intenta obtener más detalles del error
+            throw new Error(`No se pudo cargar la lista de lenguajes. Estado: ${res.status}. Detalle: ${errorText.substring(0,100)}`);
+        }
         const text = await res.text();
-        // The list is newline and comma separated, we want individual items
         const languages = text.split(/[\n,]+/).map(lang => lang.trim()).filter(lang => lang);
-        setAvailableLanguages([...new Set(languages)]); // Remove duplicates
+        setAvailableLanguages([...new Set(languages)]);
       } catch (err) {
-        console.error(err);
-        // setError("No se pudo cargar la lista de lenguajes para autocompletar."); 
-        // Minor error, don't show to user as it's just for suggestions
+        console.error("Error fetching language list:",err);
+        // Opcional: setError("Fallo al cargar sugerencias de lenguajes.");
       }
     };
     fetchLanguages();
@@ -55,38 +53,35 @@ function GitignoreGenerator() {
     }
     setIsLoading(true);
     setError(null);
-    setContent(""); // Clear previous content
+    setContent(""); 
 
-    // Sanitize input: remove extra spaces around commas and at ends
     const formattedLanguages = languageInput.trim().split(',').map(lang => lang.trim()).filter(lang => lang).join(',');
 
     try {
-      const res = await fetch(`https://www.toptal.com/developers/gitignore/api/${formattedLanguages}`);
+      // CAMBIO AQUÍ: Usar el path del proxy
+      const res = await fetch(`/toptal-api/${formattedLanguages}`);
       const text = await res.text();
       
       if (!res.ok) {
-        // Try to parse error from Toptal's response if possible, otherwise generic error
-        if (text.toLowerCase().includes("error") || text.toLowerCase().includes("unknown")) {
+        if (text.toLowerCase().includes("error") || text.toLowerCase().includes("unknown") || res.status === 404) {
           throw new Error(`Plantilla no encontrada para: ${formattedLanguages}. Verifica los nombres.`);
         }
-        throw new Error(`Error del servidor: ${res.status}`);
+        throw new Error(`Error del servidor: ${res.status}.`);
       }
       
-      // Check if the response is an HTML page (which Toptal might send for errors)
       if (text.trim().startsWith("<!DOCTYPE html>") || text.trim().startsWith("<html")) {
-          throw new Error(`Plantilla no encontrada para: ${formattedLanguages}. La API devolvió una página HTML.`);
+          throw new Error(`Plantilla no encontrada para: ${formattedLanguages}. La API devolvió una página HTML inesperada.`);
       }
 
-      // Check for Toptal's "template not found" comments
       if (text.includes("ERROR: Unrecognised project type") || text.includes("No .gitignore template found")) {
          throw new Error(`Una o más plantillas no encontradas para: ${formattedLanguages}.`);
       }
 
       setContent(text);
     } catch (err) {
-      console.error(err);
+      console.error("Error generating .gitignore:",err);
       setError(err.message || "Ocurrió un error al generar el archivo .gitignore.");
-      setContent(''); // Clear content on error
+      setContent(''); 
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +91,7 @@ function GitignoreGenerator() {
     setLanguageInput("");
     setContent("");
     setError(null);
-    setIsLoading(false);
+    setIsLoading(false); // Asegúrate de resetear isLoading también
   };
 
   const handleCopyToClipboard = async () => {
@@ -118,21 +113,19 @@ function GitignoreGenerator() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = ".gitignore";
+    a.download = ".gitignore"; // Considerar un nombre más dinámico si es posible, ej: `myproject.gitignore`
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
   
-  // Input classes consistent with READMEForm
   const inputClasses = "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 px-3 transition duration-150 ease-in-out";
   const buttonClasses = "flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out";
   const secondaryButtonClasses = "flex items-center justify-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition";
 
-
   return (
-    <div className="my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-2xl mx-auto"> {/* Card-like container */}
+    <div className="my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-2xl mx-auto">
       <h2 className="text-2xl font-semibold mb-1 text-gray-800">Generador de <code>.gitignore</code></h2>
       <p className="text-sm text-gray-600 mb-6">
         Crea rápidamente archivos <code>.gitignore</code> para tus proyectos. Escribe uno o más lenguajes o frameworks separados por comas.
@@ -151,11 +144,12 @@ function GitignoreGenerator() {
               value={languageInput}
               onChange={(e) => {
                 setLanguageInput(e.target.value);
-                if (error) setError(null); // Clear error on new input
+                if (error) setError(null);
               }}
               placeholder="Ej: node,python,react,vscode"
               className={inputClasses}
               disabled={isLoading}
+              aria-describedby={error ? "gitignore-error" : undefined}
             />
             {availableLanguages.length > 0 && (
               <datalist id="gitignore-languages-list">
@@ -188,7 +182,7 @@ function GitignoreGenerator() {
         </div>
 
         {error && (
-          <div className="mt-3 p-3 bg-red-50 border border-red-300 text-red-700 rounded-md text-sm" role="alert">
+          <div id="gitignore-error" className="mt-3 p-3 bg-red-50 border border-red-300 text-red-700 rounded-md text-sm" role="alert">
             {error}
           </div>
         )}
