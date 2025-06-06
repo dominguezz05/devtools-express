@@ -1,5 +1,5 @@
 // src/components/READMEForm.jsx
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import HelpPopup from "./HelpPopup";
 
 // --- FormField MODIFICADO para aceptar y mostrar errores ---
@@ -89,6 +89,12 @@ function READMEForm({ onGenerate, initialData = {} }) {
       });
     }
   };
+useEffect(() => {
+  const dismissed = localStorage.getItem("help-dismissed-readme");
+  if (!dismissed) {
+    setShowHelp(true);
+  }
+}, []);
 
   // --- NUEVO: Función para validar el formulario ---
   const validateForm = () => {

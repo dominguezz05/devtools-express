@@ -1,4 +1,3 @@
-// components/HelpPopup.jsx
 import { useState, useEffect } from "react";
 import { Lightbulb, X } from "lucide-react";
 
@@ -35,20 +34,20 @@ const helpContent = {
 
 function HelpPopup({ helpKey, onClose }) {
   const [isVisible, setIsVisible] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
   const content = helpContent[helpKey] || helpContent.default;
 
-  // Chequear si ya fue cerrada antes
   useEffect(() => {
     const dismissed = localStorage.getItem(`help-dismissed-${helpKey}`);
     if (!dismissed) {
       const timer = setTimeout(() => setIsVisible(true), 50);
       return () => clearTimeout(timer);
     } else {
-      onClose(); // cerramos automáticamente
+      onClose();
     }
   }, [helpKey, onClose]);
 
-  // Cerrar con la tecla Escape
   useEffect(() => {
     const closeOnEscape = (e) => {
       if (e.key === "Escape") {
@@ -61,8 +60,10 @@ function HelpPopup({ helpKey, onClose }) {
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem(`help-dismissed-${helpKey}`, "true"); // <- Guardar que fue cerrada
-    setTimeout(onClose, 300); // esperar transición
+    if (dontShowAgain) {
+      localStorage.setItem(`help-dismissed-${helpKey}`, "true");
+    }
+    setTimeout(onClose, 300);
   };
 
   if (!isVisible) return null;
@@ -70,7 +71,7 @@ function HelpPopup({ helpKey, onClose }) {
   return (
     <div
       className={`fixed top-5 right-5 z-50 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-xl shadow-2xl transition-all duration-300 ease-in-out
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
+        ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}
       role="alert"
       aria-live="assertive"
     >
@@ -79,7 +80,9 @@ function HelpPopup({ helpKey, onClose }) {
           <div className="flex-shrink-0 bg-blue-100 p-2 rounded-full">
             <Lightbulb className="w-5 h-5 text-blue-600" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-800">{content.title}</h3>
+          <h3 className="text-lg font-semibold text-slate-800">
+            {content.title}
+          </h3>
         </div>
         <button
           onClick={handleClose}
@@ -89,9 +92,20 @@ function HelpPopup({ helpKey, onClose }) {
           <X className="w-5 h-5" />
         </button>
       </div>
-      <p className="mt-3 pl-12 text-sm text-slate-600">
-        {content.details}
-      </p>
+      <p className="mt-3 pl-12 text-sm text-slate-600">{content.details}</p>
+
+      <div className="mt-4 pl-12 flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="dont-show-again"
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+          checked={dontShowAgain}
+          onChange={() => setDontShowAgain((prev) => !prev)}
+        />
+        <label htmlFor="dont-show-again" className="text-sm text-slate-600">
+          No volver a mostrar esto
+        </label>
+      </div>
     </div>
   );
 }

@@ -155,12 +155,18 @@ function SnippetEditor({ snippets, setSnippets, settings, showNotification }) {
     reader.readAsText(file);
     event.target.value = '';
   };
+  useEffect(() => {
+  const dismissed = localStorage.getItem("help-dismissed-snippeteditor");
+  if (!dismissed) {
+    setShowHelp(true);
+  }
+}, []);
 
   return (
     <div className="my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-1">
         <h2 className="text-2xl font-semibold text-gray-800">Editor de Snippets</h2>
-        <button onClick={() => setShowHelp(true)} className="text-sm text-blue-600 hover:underline">Ayuda</button>
+     
       </div>
       <p className="text-sm text-gray-600 mb-6">Crea, edita y gestiona tus fragmentos de código reutilizables. Se guardarán localmente.</p>
 

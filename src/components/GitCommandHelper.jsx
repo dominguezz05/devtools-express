@@ -100,7 +100,12 @@ function GitCommandHelper() {
     setCustomCopyStatus('idle');
     if (error) setError(null); // Limpiar error al borrar
   };
-
+useEffect(() => {
+  const dismissed = localStorage.getItem("help-dismissed-githelper");
+  if (!dismissed) {
+    setShowHelp(true);
+  }
+}, []);
   return (
     <div className={cardContainerClasses}>
       <div className="flex justify-between items-center mb-1">

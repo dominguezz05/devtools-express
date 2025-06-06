@@ -119,7 +119,12 @@ const handleSelectHistory = (historyEntry) => {
   setMinified("");             // Resetea el minificado previo
   setError("");                // Limpia errores
 };
-
+useEffect(() => {
+  const dismissed = localStorage.getItem("help-dismissed-minifier");
+  if (!dismissed) {
+    setShowHelp(true);
+  }
+}, []);
 
   return (
     <div className={cardContainerClasses}>

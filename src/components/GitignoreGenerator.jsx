@@ -45,7 +45,12 @@ function GitignoreGenerator() {
     };
     fetchLanguages();
   }, []);
-
+useEffect(() => {
+  const dismissed = localStorage.getItem("help-dismissed-gitignore");
+  if (!dismissed) {
+    setShowHelp(true);
+  }
+}, []);
   const handleGenerate = useCallback(async () => {
     // La validación ya estaba aquí, ahora el 'error' se usará para el estilo
     if (!languageInput.trim()) {

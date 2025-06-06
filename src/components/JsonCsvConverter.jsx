@@ -133,6 +133,12 @@ function JsonCsvConverter() {
     setError("");
     setCopyStatus('idle');
   };
+  useEffect(() => {
+  const dismissed = localStorage.getItem("help-dismissed-jvsoncsv");
+  if (!dismissed) {
+    setShowHelp(true);
+  }
+}, []);
 
   const handleCopyOutput = async () => { /* ... tu lógica existente ... */ };
   const handleDownloadOutput = () => { /* ... tu lógica existente ... */ };
