@@ -197,14 +197,7 @@ function App() {
               <ToolCard title="Ayudante Comandos Git" description="Accede y copia rápidamente los comandos Git más comunes." icon={<GitCmdIcon />} onClick={() => handleSelectTool('githelper')}/>
               <ToolCard title="Editor de Snippets" description="Crea, guarda y gestiona tus fragmentos de código reutilizables." icon={<SnippetEditorIcon />} onClick={() => handleSelectTool('snippeteditor')}/>
             </div>
-            <div className="mt-12 pt-8 border-t border-slate-200 text-center">
-              <h3 className="text-xl font-semibold text-slate-700 mb-4">Gestión de Configuración Global</h3>
-              <p className="text-sm text-slate-500 max-w-xl mx-auto mb-6">Guarda o carga la configuración de tus herramientas, incluyendo los snippets y ajustes del editor.</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={exportConfig} className="inline-flex items-center justify-center gap-2 bg-slate-700 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all"><ExportIcon />Exportar Configuración</button>
-                <label className="inline-flex items-center justify-center gap-2 bg-white border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg shadow-sm cursor-pointer hover:bg-slate-50 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-slate-500 transition-all"><ImportIcon />Importar Configuración<input type="file" accept=".json,application/json" onChange={importConfig} className="hidden" /></label>
-              </div>
-            </div>
+        
           </>
         ) : (
           renderActiveTool()
@@ -217,19 +210,7 @@ function App() {
     
     <div className="flex items-center gap-3">
       <HelpPanel />
-      <button
-        onClick={() => {
-          Object.keys(localStorage).forEach((key) => {
-            if (key.startsWith("help-dismissed-")) {
-              localStorage.removeItem(key);
-            }
-          });
-          window.location.reload(); // recargar para que los popups se muestren de nuevo
-        }}
-        className="text-sm text-slate-300 underline hover:text-white transition"
-      >
-        Resetear ayudas
-      </button>
+     
     </div>
   </div>
 </footer>
