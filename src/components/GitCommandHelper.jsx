@@ -3,9 +3,13 @@ import { useState, useEffect } from "react"; // Añadido useEffect
 // Imports para la funcionalidad del historial
 import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
 import HistoryPanel from "./HistoryPanel"; // Asegúrate que esta ruta es correcta
+import HelpPopup from "./HelpPopup";
+
 
 function GitCommandHelper() {
   // --- INICIO: Tu código original de constantes y componentes internos ---
+  const [showHelp, setShowHelp] = useState(true); // true para que aparezca directamente
+
   const toolTitleClasses = "text-2xl font-semibold text-gray-800";
   const toolDescriptionClasses = "text-gray-600 text-sm md:text-base";
   const cardContainerClasses = "bg-white p-6 md:p-8 rounded-xl shadow-md sm:shadow-lg space-y-6";
@@ -168,7 +172,13 @@ function GitCommandHelper() {
           onClear={handleClearHistory}
         />
       </div>
+{showHelp && (
+  <HelpPopup helpKey="githelper" onClose={() => setShowHelp(false)} />
+)}
+
+
     </div>
+    
   );
 }
 export default GitCommandHelper;

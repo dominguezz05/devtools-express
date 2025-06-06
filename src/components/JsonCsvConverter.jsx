@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
 import HistoryPanel from "./HistoryPanel";
-
+import HelpPopup from "./HelpPopup";
 // --- Constantes de Estilo y Iconos (definidas fuera del componente) ---
 const cardContainerClasses = "my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-2xl mx-auto";
 const toolTitleClasses = "text-2xl font-semibold mb-1 text-gray-800";
@@ -23,7 +23,7 @@ function JsonCsvConverter() {
   const [error, setError] = useState("");
   const [copyStatus, setCopyStatus] = useState('idle');
   const [history, setHistory] = useState([]);
-
+  const [showHelp, setShowHelp] = useState(true); // true para que aparezca directamente
   useEffect(() => {
     setHistory(getHistory(TOOL_NAME));
   }, []);
@@ -209,6 +209,9 @@ function JsonCsvConverter() {
           onClear={handleClearHistory}
         />
       </div>
+      {showHelp && (
+  <HelpPopup helpKey="jsoncsv" onClose={() => setShowHelp(false)} />
+)}
     </div>
   );
 }

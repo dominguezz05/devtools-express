@@ -1,6 +1,6 @@
 // src/components/GitignoreGenerator.jsx
 import { useState, useEffect, useCallback } from "react";
-
+import HelpPopup from "./HelpPopup";
 // --- Iconos ---
 const GenerateIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -25,6 +25,7 @@ function GitignoreGenerator() {
   const [error, setError] = useState(null);
   const [availableLanguages, setAvailableLanguages] = useState([]);
   const [copyStatus, setCopyStatus] = useState(''); // idle, copied, error
+    const [showHelp, setShowHelp] = useState(true); // true para que aparezca directamente
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -212,6 +213,9 @@ function GitignoreGenerator() {
           />
         </div>
       )}
+      {showHelp && (
+  <HelpPopup helpKey="gitignore" onClose={() => setShowHelp(false)} />
+)}
     </div>
   );
 }

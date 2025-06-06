@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from 'uuid'; // Instala uuid: npm install uuid
+import HelpPopup from "./HelpPopup";
 
 // --- Constantes de Estilo y Iconos (movidas fuera para optimizar) ---
 const inputClasses = "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 px-3 transition duration-150 ease-in-out";
@@ -13,7 +14,7 @@ function SnippetEditor({ snippets, setSnippets, settings }) {
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("javascript"); // Añadido para más contexto
-
+ const [showHelp, setShowHelp] = useState(true); // true para que aparezca directamente
   const handleSave = () => {
     if (!title.trim() || !code.trim()) return;
 
@@ -96,6 +97,9 @@ function SnippetEditor({ snippets, setSnippets, settings }) {
           )}
         </div>
       </div>
+      {showHelp && (
+  <HelpPopup helpKey="githelper" onClose={() => setShowHelp(false)} />
+)}
     </div>
   );
 }

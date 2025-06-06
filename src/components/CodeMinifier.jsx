@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { minifyHtmlBrowser } from "../utils/minifyHtml"; // ajusta la ruta si es necesario
 import { minify as cssoMinify } from "csso";
 import { minify as jsMinify } from "terser";
-
+import HelpPopup from "./HelpPopup";
 // Imports para la funcionalidad del historial
 import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
 import HistoryPanel from "./HistoryPanel"; // Asegúrate que esta ruta es correcta
@@ -15,6 +15,7 @@ function CodeMinifier() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copyStatus, setCopyStatus] = useState('idle');
+  const [showHelp, setShowHelp] = useState(true); // true para que aparezca directamente
   
   // --- NUEVO: Estado para el historial ---
   const [history, setHistory] = useState([]);
@@ -238,6 +239,10 @@ function CodeMinifier() {
           onClear={handleClearHistory}
         />
       </div>
+      {showHelp && (
+  <HelpPopup helpKey="githelper" onClose={() => setShowHelp(false)} />
+)}
+
     </div>
   );
 }

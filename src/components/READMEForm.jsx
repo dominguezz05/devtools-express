@@ -1,6 +1,6 @@
 // src/components/READMEForm.jsx
 import { useState } from "react";
-
+import HelpPopup from "./HelpPopup";
 // Helper component for form fields to reduce repetition
 const FormField = ({ id, label, type = "text", placeholder, value, onChange, isTextarea = false, rows = 3, required = false, helpText }) => {
   // Consistent classes for inputs and textareas, aligned with @tailwindcss/forms and the image
@@ -48,6 +48,7 @@ const commonLicenses = [
 ];
 
 function READMEForm({ onGenerate, initialData = {} }) {
+    const [showHelp, setShowHelp] = useState(true); // true para que aparezca directamente
   const [form, setForm] = useState({
     title: initialData.title || "",
     description: initialData.description || "",
@@ -119,7 +120,11 @@ function READMEForm({ onGenerate, initialData = {} }) {
           Generar README
         </button>
       </div>
+        {showHelp && (
+  <HelpPopup helpKey="readme" onClose={() => setShowHelp(false)} />
+)}
     </form>
+    
   );
 }
 
