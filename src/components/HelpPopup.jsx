@@ -1,6 +1,6 @@
 // components/HelpPopup.jsx
 import { useState, useEffect } from "react";
-import { Lightbulb, X } from "lucide-react"; // Usamos iconos de lucide-react
+import { Lightbulb, X } from "lucide-react";
 
 const helpContent = {
   readme: {
@@ -37,14 +37,18 @@ function HelpPopup({ helpKey, onClose }) {
   const [isVisible, setIsVisible] = useState(false);
   const content = helpContent[helpKey] || helpContent.default;
 
-  // Efecto para la transición de entrada
+  // Chequear si ya fue cerrada antes
   useEffect(() => {
-    // Pequeño delay para permitir que el elemento se monte antes de aplicar la transición
-    const timer = setTimeout(() => setIsVisible(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
+    const dismissed = localStorage.getItem(`help-dismissed-${helpKey}`);
+    if (!dismissed) {
+      const timer = setTimeout(() => setIsVisible(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      onClose(); // cerramos automáticamente
+    }
+  }, [helpKey, onClose]);
 
-  // Efecto para el cierre con la tecla 'Escape'
+  // Cerrar con la tecla Escape
   useEffect(() => {
     const closeOnEscape = (e) => {
       if (e.key === "Escape") {
@@ -53,19 +57,20 @@ function HelpPopup({ helpKey, onClose }) {
     };
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, []); // El array de dependencias vacío es correcto aquí
+  }, []);
 
   const handleClose = () => {
     setIsVisible(false);
-    // Esperar a que la transición de salida termine antes de llamar a onClose
-    setTimeout(onClose, 300); // La duración debe coincidir con la transición de Tailwind
+    localStorage.setItem(`help-dismissed-${helpKey}`, "true"); // <- Guardar que fue cerrada
+    setTimeout(onClose, 300); // esperar transición
   };
+
+  if (!isVisible) return null;
 
   return (
     <div
       className={`fixed top-5 right-5 z-50 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-xl shadow-2xl transition-all duration-300 ease-in-out
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`
-      }
+        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
       role="alert"
       aria-live="assertive"
     >

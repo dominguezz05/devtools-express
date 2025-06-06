@@ -192,12 +192,29 @@ function App() {
         )}
       </main>
 
-      <footer className="bg-slate-800 text-slate-300 p-4 mt-auto">
-        <div className="container mx-auto flex justify-between items-center">
-          <p>&copy; {new Date().getFullYear()} DevTools Express.</p>
-          <HelpPanel />
-        </div>
-      </footer>
+  <footer className="bg-slate-800 text-slate-300 p-4 mt-auto">
+  <div className="container mx-auto flex justify-between items-center gap-4 flex-wrap">
+    <p>&copy; {new Date().getFullYear()} DevTools Express.</p>
+    
+    <div className="flex items-center gap-3">
+      <HelpPanel />
+      <button
+        onClick={() => {
+          Object.keys(localStorage).forEach((key) => {
+            if (key.startsWith("help-dismissed-")) {
+              localStorage.removeItem(key);
+            }
+          });
+          window.location.reload(); // recargar para que los popups se muestren de nuevo
+        }}
+        className="text-sm text-slate-300 underline hover:text-white transition"
+      >
+        Resetear ayudas
+      </button>
+    </div>
+  </div>
+</footer>
+
     </div>
   );
 }
