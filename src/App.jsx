@@ -87,7 +87,14 @@ function App() {
   const showNotification = (message, type = 'info', duration = 3000) => { /* ... */ };
   const exportConfig = () => { /* ... */ };
   const importConfig = (event) => { /* ... */ };
-  const handleReadmeGenerate = (formData) => { /* ... */ };
+ const handleReadmeGenerate = (formData) => {
+  console.log("[DEBUG] Generando README con:", formData);
+  const markdown = generateReadme(formData);
+  console.log("[DEBUG] Markdown generado:", markdown);
+  setReadmeContent(markdown);
+  setProjectTitle(formData.title);
+};
+
 
   const handleSelectTool = (toolName) => {
     setActiveTool(toolName);

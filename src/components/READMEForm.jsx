@@ -105,13 +105,21 @@ function READMEForm({ onGenerate, initialData = {} }) {
     return Object.keys(newErrors).length === 0; // Devuelve true si no hay errores
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Validar el formulario antes de generar el README
-    if (validateForm()) {
-      onGenerate(form);
-    }
-  };
+const handleSubmit = (e) => {
+  e.preventDefault();
+  console.log("[DEBUG] Botón 'Generar README' clicado");
+
+  if (validateForm()) {
+    console.log("[DEBUG] Formulario válido, datos enviados:");
+    console.log(form);
+
+    onGenerate(form); // Esto debe pasar el objeto al padre
+  } else {
+    console.warn("[DEBUG] Formulario inválido. Errores:");
+    console.warn(errors);
+  }
+};
+
 
   const selectClasses = "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm transition duration-150 ease-in-out py-2.5 px-3";
 
