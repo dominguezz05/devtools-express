@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
 import HistoryPanel from "./HistoryPanel";
 import HelpPopup from "./HelpPopup";
+import CopyButton from "./CopyButton";
+import DownloadButton from "./DownloadButton";
 
 // --- Constantes de Estilo y Iconos (definidas fuera del componente) ---
 const cardContainerClasses = "my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-2xl mx-auto";
@@ -179,15 +181,10 @@ function JsonCsvConverter() {
           <div>
             <div className="flex justify-between items-center mt-4 mb-1">
               <label htmlFor="json-csv-output" className="block text-sm font-medium text-gray-700">Salida:</label>
-              <div className="flex gap-2">
-                <button onClick={handleCopyOutput} className={`${secondaryButtonClasses()} min-w-[90px]`}>
-                  {copyStatus === 'copied' ? <CheckIconMini/> : <CopyIconMini/> }
-                  <span className="ml-1.5">{copyStatus === 'copied' ? 'Copiado' : copyStatus === 'error' ? 'Error' : 'Copiar'}</span>
-                </button>
-                <button onClick={handleDownloadOutput} className={secondaryButtonClasses()}>
-                  <DownloadIconMini /> <span className="ml-1.5">Descargar</span>
-                </button>
-              </div>
+                <div className="flex gap-2">
+  <CopyButton content={output} buttonText="Copiar" />
+  <DownloadButton content={output} filename=".converter" />
+</div>
             </div>
             <textarea
               id="json-csv-output"

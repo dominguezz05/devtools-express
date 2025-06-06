@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import HelpPopup from "./HelpPopup";
-
+import CopyButton from "./CopyButton";
+import DownloadButton from "./DownloadButton";
 // --- Iconos ---
 const GenerateIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -170,15 +171,11 @@ function GitignoreGenerator() {
         <div className="mt-6">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-md font-medium text-gray-700">Resultado generado:</h3>
-            <div className="flex gap-2">
-              <button onClick={handleCopyToClipboard} className={`${secondaryButtonClasses} min-w-[90px]`}>
-                {copyStatus === 'copied' ? <>...Copiado</> : <>...Copiar</>}
-              </button>
-              <button onClick={handleDownload} className={secondaryButtonClasses}>
-                <DownloadIconMini />
-                <span className="ml-1.5">Descargar</span>
-              </button>
-            </div>
+           <div className="flex gap-2">
+  <CopyButton content={content} buttonText="Copiar" />
+  <DownloadButton content={content} filename=".gitignore" />
+</div>
+
           </div>
           <textarea
             className="w-full h-72 p-3 border border-gray-300 rounded-md bg-gray-50 font-mono text-xs shadow-sm focus:ring-blue-500 focus:border-blue-500"

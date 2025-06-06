@@ -4,6 +4,9 @@ import { minify as jsMinify } from "terser";
 import HelpPopup from "./HelpPopup";
 import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
 import HistoryPanel from "./HistoryPanel";
+import CopyButton from "./CopyButton";
+import DownloadButton from "./DownloadButton";
+
 
 function CodeMinifier() {
   const [code, setCode] = useState("");
@@ -98,11 +101,25 @@ function CodeMinifier() {
     }
   };
 
-  const handleClearAll = () => { /* ...tu lógica existente... */ };
+const handleClearAll = () => {
+  setCode("");
+  setMinified("");
+  setError("");
+  setCopyStatus("idle");
+};
+
   const handleCopyOutput = () => { /* ...tu lógica existente... */ };
   const handleDownloadOutput = () => { /* ...tu lógica existente... */ };
-  const handleClearHistory = () => { /* ...tu lógica existente... */ };
-  const handleSelectHistory = (historyEntry) => { /* ...tu lógica existente... */ };
+const handleClearHistory = () => {
+  clearHistory(TOOL_NAME);     // Borra del localStorage
+  setHistory([]);              // Limpia el estado local
+};
+const handleSelectHistory = (historyEntry) => {
+  setCode(historyEntry);       // Rellena el campo de entrada
+  setMinified("");             // Resetea el minificado previo
+  setError("");                // Limpia errores
+};
+
 
   return (
     <div className={cardContainerClasses}>
@@ -177,13 +194,9 @@ function CodeMinifier() {
             <div className="flex justify-between items-center mt-4 mb-1">
               <label htmlFor="minifier-output" className="block text-sm font-medium text-gray-700">Código Minificado:</label>
               <div className="flex gap-2">
-                <button onClick={handleCopyOutput} className={`${secondaryButtonClasses()} min-w-[90px]`}>
-                  {copyStatus === 'copied' ? <CheckIconMini/> : <CopyIconMini/> }
-                  <span className="ml-1.5">{copyStatus === 'copied' ? 'Copiado' : copyStatus === 'error' ? 'Error' : 'Copiar'}</span>
-                </button>
-                <button onClick={handleDownloadOutput} className={secondaryButtonClasses()}>
-                  <DownloadIconMini /> <span className="ml-1.5">Descargar</span>
-                </button>
+               <CopyButton content={minified} buttonText="Copiar código" />
+<DownloadButton content={minified} filename={`minified.${language}`} />
+
               </div>
             </div>
             <textarea
