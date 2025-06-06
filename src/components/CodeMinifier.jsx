@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { minifyHtmlBrowser } from "../utils/minifyHtml"; // ajusta la ruta si es necesario
-
-import { minify as cssoMinify } from "csso"; // csso.minify devuelve un objeto
+import { minify as cssoMinify } from "csso";
 import { minify as jsMinify } from "terser";
 
-// Iconos y clases definidos arriba o importados
+// Imports para la funcionalidad del historial
+import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
+import HistoryPanel from "./HistoryPanel"; // Asegúrate que esta ruta es correcta
 
+// El resto de tu código, sin modificaciones, pero con el historial integrado
 function CodeMinifier() {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("html");
@@ -13,6 +15,13 @@ function CodeMinifier() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copyStatus, setCopyStatus] = useState('idle');
+  
+  // --- NUEVO: Estado para el historial ---
+  const [history, setHistory] = useState([]);
+  
+  // Constante para la clave del localStorage
+  const TOOL_NAME = "code-minifier";
+
   const cardContainerClasses = "bg-white p-6 md:p-8 rounded-xl shadow-md sm:shadow-lg space-y-6";
   const toolTitleClasses = "text-2xl font-semibold text-gray-800";
   const toolDescriptionClasses = "text-gray-600 text-sm md:text-base";
@@ -23,14 +32,21 @@ function CodeMinifier() {
   const ConvertIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4m16 0l-4-4m0 8l4-4m-8 0l-4 4m0-8l4 4" /></svg>;
   const CopyIconMini = () => <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 6H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-2m-4-8h4a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h4m4-4h4a2 2 0 012 2v4m-6-6V6m0-4h4a2 2 0 012 2v4m-6-6H8a2 2 0 00-2 2v4m10-10H8a2 2 0 00-2 2v4" /></svg>;
   const CheckIconMini = () => <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
-
   const ClearIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>;
   const MinifyIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4m16 0l-4-4m0 8l4-4m-8 0l-4 4m0-8l4 4" /></svg>;
   const DownloadIconMini = () => <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m0 0l-4-4m4 4l4-4m-8 6h8a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
   const inputClasses = "block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+  const copyToClipboard = async (text, onSuccess, onError) => { // Helper para copiar
+      try { await navigator.clipboard.writeText(text); onSuccess(); }
+      catch (err) { console.error("Error al copiar:", err); onError(); }
+  };
 
+  // --- NUEVO: Cargar historial al inicio ---
+  useEffect(() => {
+    setHistory(getHistory(TOOL_NAME));
+  }, []);
 
-  useEffect(() => { // Limpiar salida y error si cambia el lenguaje o el código
+  useEffect(() => {
     setMinified("");
     setError("");
     setCopyStatus('idle');
@@ -46,37 +62,42 @@ function CodeMinifier() {
     setMinified("");
     setCopyStatus('idle');
 
-  try {
-  let resultText = "";
-
-  if (language === "html") {
-    resultText = minifyHtmlBrowser(code);
-  } else if (language === "css") {
-    const result = cssoMinify(code);
-    if (result.css) {
-      resultText = result.css;
-    } else {
-      throw new Error("La minificación CSS no produjo resultado.");
+    try {
+      let resultText = "";
+      if (language === "html") {
+        // Asumiendo que minifyHtmlBrowser es una función simple, segura para el navegador
+        const minifyHtmlBrowser = (htmlString) => htmlString.replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
+        resultText = minifyHtmlBrowser(code);
+      } else if (language === "css") {
+        const result = cssoMinify(code);
+        if (result.css) {
+          resultText = result.css;
+        } else {
+          throw new Error("La minificación CSS no produjo resultado.");
+        }
+      } else if (language === "js") {
+        const result = await jsMinify(code, {
+          mangle: { toplevel: true },
+          compress: { drop_console: true }
+        });
+        if (result.code) {
+          resultText = result.code;
+        } else {
+          throw new Error("La minificación JS no produjo resultado.");
+        }
+      }
+      setMinified(resultText);
+      
+      // --- NUEVO: Guardar en el historial tras el éxito ---
+      saveToHistory(TOOL_NAME, code);
+      setHistory(getHistory(TOOL_NAME)); // Actualizar la UI del historial
+      
+    } catch (err) {
+      setError(`❌ Error al minificar: ${err.message}`);
+      setMinified("");
+    } finally {
+      setIsLoading(false);
     }
-  } else if (language === "js") {
-    const result = await jsMinify(code, {
-      mangle: { toplevel: true },
-      compress: { drop_console: true }
-    });
-    if (result.code) {
-      resultText = result.code;
-    } else {
-      throw new Error("La minificación JS no produjo resultado.");
-    }
-  }
-
-  setMinified(resultText);
-} catch (err) {
-  setError(`❌ Error al minificar: ${err.message}`);
-  setMinified("");
-} finally {
-  setIsLoading(false);
-}
   };
 
   const handleClearAll = () => {
@@ -113,7 +134,19 @@ function CodeMinifier() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+  
+  // --- NUEVO: Funciones para manejar el historial ---
+  const handleClearHistory = () => {
+    clearHistory(TOOL_NAME);
+    setHistory([]);
+  };
 
+  const handleSelectHistory = (historyEntry) => {
+    setCode(historyEntry);
+    setMinified("");
+    setError("");
+    setCopyStatus('idle');
+  };
 
   return (
     <div className={cardContainerClasses}>
@@ -159,10 +192,10 @@ function CodeMinifier() {
             disabled={isLoading || !code.trim()}
           >
             {isLoading ? (
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
             ) : <MinifyIcon />}
             <span className="ml-2">{isLoading ? "Minificando..." : "Minificar Código"}</span>
           </button>
@@ -197,6 +230,13 @@ function CodeMinifier() {
             />
           </div>
         )}
+        
+        {/* --- NUEVO: Panel del historial renderizado aquí --- */}
+        <HistoryPanel
+          history={history}
+          onSelect={handleSelectHistory}
+          onClear={handleClearHistory}
+        />
       </div>
     </div>
   );

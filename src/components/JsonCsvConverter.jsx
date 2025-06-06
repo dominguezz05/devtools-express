@@ -1,115 +1,114 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
+import HistoryPanel from "./HistoryPanel";
 
-// Iconos y clases definidos arriba o importados
+// --- Constantes de Estilo y Iconos (definidas fuera del componente) ---
+const cardContainerClasses = "my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-2xl mx-auto";
+const toolTitleClasses = "text-2xl font-semibold mb-1 text-gray-800";
+const toolDescriptionClasses = "text-sm text-gray-600 mb-6";
+const textareaClasses = "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 px-3 transition duration-150 ease-in-out font-mono text-xs";
+const primaryButtonClasses = (disabled) => `inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${disabled ? 'bg-gray-400 cursor-not-allowed text-gray-700' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 text-white'}`;
+const secondaryButtonClasses = () => "inline-flex items-center justify-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition";
+const errorAlertClasses = "mt-3 p-3 bg-red-50 border border-red-300 text-red-700 rounded-md text-sm";
+const ConvertIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h18M16.5 3l4.5 4.5m0 0L16.5 12m4.5-4.5H3" /></svg>;
+const CopyIconMini = ({className="w-4 h-4"}) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125V7.5m0 12.75v-7.5m0 0H3M9 7.5H6.375m0 0A2.25 2.25 0 0 1 8.625 3h6.75A2.25 2.25 0 0 1 17.625 5.25m0 2.25V11.25m0 0H21m-2.25 0H12.375M15 12H3.375" /></svg>;
+const CheckIconMini = ({className="w-4 h-4"}) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>;
+const ClearIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>;
+const DownloadIconMini = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>;
+const TOOL_NAME = "json-csv-converter";
 
 function JsonCsvConverter() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
-  const [copyStatus, setCopyStatus] = useState('idle'); // idle, copied, error
-  const cardContainerClasses = "bg-white p-6 md:p-8 rounded-xl shadow-md sm:shadow-lg space-y-6";
-  const toolTitleClasses = "text-2xl font-semibold text-gray-800";
-  const toolDescriptionClasses = "text-gray-600 text-sm md:text-base";
-  const textareaClasses = "w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 resize-none";
-  const primaryButtonClasses = (disabled) => `inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${disabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 text-white'}`;
-  const secondaryButtonClasses = () => "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200";
-  const errorAlertClasses = "bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md shadow-sm mb-4";
-  const ConvertIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4m16 0l-4-4m0 8l4-4m-8 0l-4 4m0-8l4 4" /></svg>;
-  const CopyIconMini = () => <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 6H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-2m-4-8h4a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h4m4-4h4a2 2 0 012 2v4m-6-6V6m0-4h4a2 2 0 012 2v4m-6-6H8a2 2 0 00-2 2v4m10-10H8a2 2 0 00-2 2v4" /></svg>;
-  const CheckIconMini = () => <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
+  const [copyStatus, setCopyStatus] = useState('idle');
+  const [history, setHistory] = useState([]);
 
-  const ClearIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>;
+  useEffect(() => {
+    setHistory(getHistory(TOOL_NAME));
+  }, []);
+
+  const updateAndSaveHistory = (newEntry) => {
+    saveToHistory(TOOL_NAME, newEntry);
+    setHistory(getHistory(TOOL_NAME));
+  };
+
+  const handleClearHistory = () => {
+    clearHistory(TOOL_NAME);
+    setHistory([]);
+  };
+
+  const handleSelectHistory = (historyEntry) => {
+    setInput(historyEntry);
+    setOutput("");
+    setError("");
+    setCopyStatus('idle');
+  };
+
   const handleInputChange = (e) => {
     setInput(e.target.value);
-    if (error) setError(""); // Limpiar error al escribir
-    if (output) setOutput(""); // Limpiar output al cambiar input
+    if (error) setError("");
+    if (output) setOutput("");
     setCopyStatus('idle');
   };
 
   const convertToCSV = () => {
-    if (!input.trim()) {
-      setError("❌ El campo de entrada está vacío.");
-      return;
-    }
+    if (!input.trim()) return setError("❌ El campo de entrada está vacío.");
     try {
       let jsonData = JSON.parse(input);
       if (!Array.isArray(jsonData)) {
-        // Si no es un array, intentar tratarlo como un solo objeto en un array
-        if (typeof jsonData === 'object' && jsonData !== null) {
-          jsonData = [jsonData];
-        } else {
-          throw new Error("La entrada debe ser un array de objetos JSON o un único objeto JSON.");
-        }
+        if (typeof jsonData === 'object' && jsonData !== null) jsonData = [jsonData];
+        else throw new Error("La entrada debe ser un array de objetos JSON o un único objeto JSON.");
       }
-      if (jsonData.length === 0) {
-        setOutput(""); // CSV vacío para array JSON vacío
-        setError("");
-        return;
-      }
+      if (jsonData.length === 0) return setOutput("");
       const headers = Object.keys(jsonData[0]);
-      const rows = jsonData.map(obj => 
-        headers.map(header => {
-          const value = obj[header];
-          // Manejar comas y comillas en los valores
-          if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
-            return `"${value.replace(/"/g, '""')}"`; // Escapar comillas dobles y envolver
-          }
-          return value;
-        }).join(",")
-      );
+      const rows = jsonData.map(obj => headers.map(header => {
+        const value = obj[header];
+        if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      }).join(","));
       setOutput([headers.join(","), ...rows].join("\n"));
       setError("");
       setCopyStatus('idle');
+      updateAndSaveHistory(input);
     } catch (err) {
       setOutput("");
       setError("❌ Error al convertir a CSV: " + err.message);
     }
   };
-
+  
   const convertToJSON = () => {
-    if (!input.trim()) {
-      setError("❌ El campo de entrada está vacío.");
-      return;
-    }
+    if (!input.trim()) return setError("❌ El campo de entrada está vacío.");
     try {
       const lines = input.trim().split("\n");
-      if (lines.length === 0) {
-        setOutput("[]"); // JSON vacío para CSV vacío
-        setError("");
-        return;
-      }
-      const headerLine = lines.shift(); // Tomar la primera línea como cabecera
+      if (lines.length === 0) return setOutput("[]");
+      const headerLine = lines.shift();
       if (!headerLine) throw new Error("El CSV no tiene línea de cabecera.");
-
-      // Expresión regular para parsear campos CSV, manejando comillas
       const csvRegex = /(?:^|,)(\"(?:[^"]+|\"\")*\"|[^,]*)/g;
-      
       const parseCsvLine = (line) => {
         const values = [];
         let match;
         while ((match = csvRegex.exec(line))) {
-            let value = match[1];
-            if (value.startsWith('"') && value.endsWith('"')) {
-                value = value.slice(1, -1).replace(/""/g, '"');
-            }
-            values.push(value);
+          let value = match[1];
+          if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1).replace(/""/g, '"');
+          }
+          values.push(value);
         }
         return values;
       };
-
       const headers = parseCsvLine(headerLine);
-      
       const result = lines.map(line => {
+        if (!line.trim()) return null;
         const values = parseCsvLine(line);
-        if (values.length !== headers.length && line.trim() !== "") {
-            // Podría ser una línea vacía al final, ignorarla si es el caso
-            console.warn(`Número de valores (${values.length}) no coincide con cabeceras (${headers.length}) en línea: ${line}`);
-        }
-        return Object.fromEntries(headers.map((h, i) => [h.trim(), values[i] !== undefined ? values[i] : ""]));
-      });
+        return Object.fromEntries(headers.map((h, i) => [h.trim(), values[i] ?? ""]));
+      }).filter(Boolean);
       setOutput(JSON.stringify(result, null, 2));
       setError("");
       setCopyStatus('idle');
+      updateAndSaveHistory(input);
     } catch (err) {
       setOutput("");
       setError("❌ Error al convertir a JSON: " + err.message);
@@ -123,22 +122,25 @@ function JsonCsvConverter() {
     setCopyStatus('idle');
   };
 
-  const handleCopyOutput = () => {
-    copyToClipboard(output, 
-      () => setCopyStatus('copied'), 
-      () => setCopyStatus('error')
-    );
-    setTimeout(() => setCopyStatus('idle'), 2000);
+  const handleCopyOutput = async () => {
+    if (!output) return;
+    try {
+      await navigator.clipboard.writeText(output);
+      setCopyStatus('copied');
+    } catch (err) {
+      console.error("Error al copiar:", err);
+      setCopyStatus('error');
+    } finally {
+      setTimeout(() => setCopyStatus('idle'), 2000);
+    }
   };
 
   const handleDownloadOutput = () => {
     if (!output) return;
-    // Determinar tipo de archivo y extensión basado en el primer carácter del output
     const isJson = output.trim().startsWith('{') || output.trim().startsWith('[');
-    const MimeType = isJson ? "application/json" : "text/csv";
+    const mimeType = isJson ? "application/json" : "text/csv";
     const filename = isJson ? "converted.json" : "converted.csv";
-
-    const blob = new Blob([output], { type: `${MimeType};charset=utf-8` });
+    const blob = new Blob([output], { type: `${mimeType};charset=utf-8` });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -152,24 +154,19 @@ function JsonCsvConverter() {
   return (
     <div className={cardContainerClasses}>
       <h2 className={toolTitleClasses}>Convertidor JSON ↔ CSV</h2>
-      <p className={toolDescriptionClasses}>
-        Pega tu contenido JSON o CSV en el área de entrada y elige la dirección de la conversión.
-      </p>
-
+      <p className={toolDescriptionClasses}>Pega tu contenido JSON o CSV y elige la dirección de la conversión.</p>
       <div className="space-y-4">
         <div>
           <label htmlFor="json-csv-input" className="block text-sm font-medium text-gray-700 mb-1">Entrada:</label>
-      <textarea
-  id="json-csv-input"
-  className={`${textareaClasses} h-40`}
-  placeholder={`Pega aquí JSON o CSV. Ejemplos:\n\nJSON:\n[\n  { "id": 1, "valor": "abc" }\n]\n\nCSV:\nid,valor\n1,abc`}
-  value={input}
-  onChange={handleInputChange}
-  aria-describedby={error ? "converter-error" : undefined}
-/>
-
+          <textarea
+            id="json-csv-input"
+            className={`${textareaClasses} h-40 resize-y`}
+            placeholder={`Pega aquí JSON o CSV. Ejemplos:\nJSON: [{ "id": 1, "valor": "abc" }]\nCSV: id,valor\\n1,abc`}
+            value={input}
+            onChange={handleInputChange}
+            aria-describedby={error ? "converter-error" : undefined}
+          />
         </div>
-
         <div className="flex flex-col sm:flex-row gap-3 items-center">
           <button type="button" onClick={convertToCSV} className={`${primaryButtonClasses(!input.trim())} w-full sm:w-auto`} disabled={!input.trim()}>
             <ConvertIcon /> <span className="ml-2">JSON → CSV</span>
@@ -183,9 +180,7 @@ function JsonCsvConverter() {
             </button>
           )}
         </div>
-
         {error && <div id="converter-error" className={errorAlertClasses} role="alert">{error}</div>}
-        
         {output && (
           <div>
             <div className="flex justify-between items-center mt-4 mb-1">
@@ -202,14 +197,20 @@ function JsonCsvConverter() {
             </div>
             <textarea
               id="json-csv-output"
-              className={`${textareaClasses} h-40 bg-slate-50`}
+              className={`${textareaClasses} h-40 bg-slate-50 resize-y`}
               readOnly
               value={output}
             />
           </div>
         )}
+        <HistoryPanel
+          history={history}
+          onSelect={handleSelectHistory}
+          onClear={handleClearHistory}
+        />
       </div>
     </div>
   );
 }
+
 export default JsonCsvConverter;
