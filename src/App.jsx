@@ -13,6 +13,7 @@ import SnippetEditor from "./components/SnippetEditor";
 import { generateReadme } from "./utils/generateReadme";
 import { saveSnippets, getSnippets } from "./utils/snippetStorage";
 import HelpPanel from './components/HelpPanel'; 
+import FancyButton from "./components/FancyButton";
 
 
 
@@ -160,12 +161,13 @@ const PantallaInicio = () => (
   <p className="text-lg sm:text-xl text-slate-700">
     Automatiza tareas, crea archivos y acelera tu flujo de trabajo como desarrollador.
   </p>
-    <button
-      onClick={() => setPantalla("herramientas")}
-      className=" cursor-pointer mt-10 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 hover:shadow-xl hover:scale-105 transition-all duration-300 text-lg font-semibold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-    >
-      🚀 Empezar
-    </button>
+<div className="mt-8">
+  <FancyButton onClick={() => setPantalla("herramientas")}>
+    🚀 Comenzar
+  </FancyButton>
+</div>
+
+
 </div>
 
   </section>
