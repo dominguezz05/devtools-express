@@ -15,6 +15,7 @@ import { saveSnippets, getSnippets } from "./utils/snippetStorage";
 import HelpPanel from './components/HelpPanel'; 
 
 
+
 // --- Iconos para la UI y Tarjetas de Herramientas ---
 const ReadmeIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg> );
 const GitignoreIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636M15.75 5.25V3m0 2.25h-1.5m1.5 0-1.125-1.125M15.75 5.25L14.625 4.125M9 20.25h6M10.5 16.5h3M12 12.75h.008v.008H12v-.008Z" /></svg> );
@@ -204,16 +205,34 @@ function App() {
         )}
       </main>
 
-  <footer className="bg-slate-800 text-slate-300 p-4 mt-auto">
-  <div className="container mx-auto flex justify-between items-center gap-4 flex-wrap">
-    <p>&copy; {new Date().getFullYear()} DevTools Express.</p>
+<footer className="bg-slate-800 text-slate-300 px-6 py-4 mt-auto shadow-inner">
+  <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
     
-    <div className="flex items-center gap-3">
-      <HelpPanel />
-     
+    <div className="text-sm text-center sm:text-left">
+      <p>
+        &copy; {new Date().getFullYear()} <strong className="text-white">DevTools Express</strong>. Desarrollado por Iker Domínguez.
+      </p>
+      <p className="text-xs text-slate-400">
+        Herramientas para optimizar tu flujo de desarrollo.
+      </p>
     </div>
+
+    <div className="flex items-center gap-4">
+      <a
+        href="https://github.com/dominguezz05/devtools-express"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-white transition"
+      >
+        GitHub
+      </a>
+     
+      <HelpPanel />
+    </div>
+
   </div>
 </footer>
+
 
     </div>
   );
