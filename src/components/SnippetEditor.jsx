@@ -200,7 +200,7 @@ const performDelete = () => {
               {editingId ? "Actualizar Snippet" : "Guardar Snippet"}
             </button>
             {editingId && (
-              <button onClick={resetForm} className="flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-colors duration-200 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <button onClick={resetForm} className="cursor-pointer flex-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-colors duration-200 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Cancelar Edición
               </button>
             )}
@@ -223,8 +223,8 @@ const performDelete = () => {
                   <div className="flex justify-between items-center mb-2">
                     <strong className="text-gray-800 break-all">{snip.title}</strong>
                     <div className="flex gap-2 flex-shrink-0 ml-2">
-                      <button onClick={() => handleEdit(snip)} className="p-1 text-blue-600 hover:bg-blue-100 rounded-full" title="Editar snippet"><EditIcon /></button>
-                      <button onClick={() => confirmDelete(snip.id)} className="p-1 text-red-500 hover:bg-red-100 rounded-full" title="Eliminar snippet"> <TrashIcon /></button>
+                      <button onClick={() => handleEdit(snip)} className="p-1 text-blue-600 hover:bg-blue-100 rounded-full cursor-pointer " title="Editar snippet"><EditIcon /></button>
+                      <button onClick={() => confirmDelete(snip.id)} className="p-1 text-red-500 hover:bg-red-100 rounded-full cursor-pointer" title="Eliminar snippet"> <TrashIcon /></button>
 
                     </div>
                   </div>
@@ -246,13 +246,13 @@ const performDelete = () => {
       <div className="flex justify-end gap-2">
         <button
           onClick={() => setConfirmDeleteId(null)}
-          className="px-4 py-1.5 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+          className="px-4 py-1.5 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer"
         >
           Cancelar
         </button>
         <button
           onClick={performDelete}
-          className="px-4 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+          className="px-4 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
         >
           Sí, eliminar
         </button>
@@ -287,11 +287,11 @@ const performDelete = () => {
 
             <p className="text-xs text-slate-500 mb-4">Guarda todos tus snippets en un archivo, o carga snippets desde un archivo de configuración.</p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button onClick={exportSnippets} className="inline-flex items-center justify-center gap-2 bg-slate-700 text-white px-4 py-2 rounded-lg shadow-md hover:bg-slate-800 transition-colors w-full sm:w-auto text-sm">
+              <button onClick={exportSnippets} className="inline-flex items-center justify-center gap-2 bg-slate-700 text-white px-4 py-2 rounded-lg shadow-md hover:bg-slate-800 transition-colors w-full sm:w-auto text-sm cursor-pointer">
                 <ExportIcon />
                 Exportar Snippets
               </button>
-              <label className="inline-flex items-center justify-center gap-2 bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg shadow-sm cursor-pointer hover:bg-slate-50 transition-colors w-full sm:w-auto text-sm">
+              <label className="inline-flex items-center justify-center gap-2 bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg shadow-sm cursor-pointer hover:bg-slate-50 transition-colors w-full sm:w-auto text-sm cursor-pointer">
                 <ImportIcon />
                 Importar Snippets
                 <input type="file" accept=".json,application/json" onChange={importSnippets} className="hidden" />

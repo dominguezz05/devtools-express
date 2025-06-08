@@ -34,7 +34,7 @@ function GitCommandHelper() {
       <button
         type="button"
         onClick={handleCopy}
-        className={`${secondaryButtonClasses(status === 'copied').replace('text-xs','text-[11px] leading-4').replace('px-3 py-1.5','px-2 py-1')} min-w-[70px]`}
+        className={`${secondaryButtonClasses(status === 'copied').replace('text-xs','text-[11px] leading-4').replace('px-3 py-1.5','px-2 py-1')} min-w-[70px] cursor-pointer`}
         disabled={status === 'copied'}
       >
         {status === 'copied' ? <CheckIconMini className="w-3.5 h-3.5"/> : <CopyIconMini className="w-3.5 h-3.5"/>}
@@ -153,7 +153,7 @@ useEffect(() => {
                 aria-describedby={error ? "git-command-error" : undefined}
             />
             {customCommand && (
-                <button type="button" onClick={handleClearCustom} title="Limpiar comando personalizado" className="p-2.5 text-gray-400 hover:text-red-600 rounded-md">
+                <button type="button" onClick={handleClearCustom} title="Limpiar comando personalizado" className="p-2.5 text-gray-400 hover:text-red-600 rounded-md cursor-pointer">
                     <ClearIcon/>
                 </button>
             )}
@@ -164,7 +164,7 @@ useEffect(() => {
         <button
           type="button"
           onClick={handleCustomCopy}
-          className={`${primaryButtonClasses(!customCommand.trim() || customCopyStatus !== 'idle').replace('bg-blue-600 hover:bg-blue-700 focus:ring-blue-500','bg-green-600 hover:bg-green-700 focus:ring-green-500')} w-full sm:w-auto`}
+          className={`${primaryButtonClasses(!customCommand.trim() || customCopyStatus !== 'idle').replace('bg-blue-600 hover:bg-blue-700 focus:ring-blue-500','bg-green-600 hover:bg-green-700 focus:ring-green-500')} w-full sm:w-auto cursor-pointer`}
           disabled={!customCommand.trim() || customCopyStatus !== 'idle'}
         >
           {customCopyStatus === 'copied' ? <CheckIconMini className="w-4 h-4"/> : <CopyIconMini className="w-4 h-4" /> }

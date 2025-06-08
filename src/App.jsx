@@ -31,7 +31,7 @@ const ChevronDownIcon = ({className="w-5 h-5"}) => (<svg xmlns="http://www.w3.or
 
 // --- Componente ToolCard ---
 const ToolCard = ({ title, description, icon, onClick }) => (
-  <button onClick={onClick} type="button" className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out text-left w-full flex flex-col items-center md:items-start transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+  <button onClick={onClick} type="button" className="cursor-pointer bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out text-left w-full flex flex-col items-center md:items-start transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
     <div className="mb-4">{icon}</div>
     <h3 className="text-xl font-semibold text-slate-800 mb-2 text-center md:text-left">{title}</h3>
     <p className="text-slate-600 text-sm text-center md:text-left">{description}</p>
@@ -54,6 +54,8 @@ function App() {
   const [readmeContent, setReadmeContent] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
   const [snippets, setSnippets] = useState(() => getSnippets());
+  const [pantalla, setPantalla] = useState("inicio"); // inicio | herramientas
+
   const [settings, setSettings] = useState(() => {
     try {
       const storedSettings = localStorage.getItem('devtools-settings');
@@ -124,6 +126,63 @@ function App() {
       default: return null;
     }
   };
+const PantallaInicio = () => (
+  <section className="relative flex flex-col items-center justify-center text-center min-h-[calc(103vh-160px)] px-4 py-10 overflow-hidden">
+    
+    {/* Fondo de vídeo */}
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover z-0"
+    >
+      <source src="/videos/fondo.mp4" type="video/mp4" />
+      Tu navegador no soporta vídeo en HTML5.
+    </video>
+
+    {/* Contenido superpuesto centrado */}
+    <div className="relative z-10 bg-white/50 backdrop-blur-sm p-8 rounded-xl shadow-xl max-w-3xl text-center flex flex-col items-center">
+      <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 mb-6">
+        Bienvenido a  DevTools Express
+      </h1>
+      <p className="text-lg sm:text-xl text-slate-600">
+        Automatiza tareas, crea archivos y acelera tu flujo de trabajo como desarrollador.
+      </p>
+      <button
+        onClick={() => setPantalla("herramientas")}
+        className="mt-10 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 text-lg font-semibold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+      >
+        🚀 Empezar
+      </button>
+    </div>
+  </section>
+);
+
+
+
+const PantallaHerramientas = () => (
+  <section className="container mx-auto p-4 sm:p-6 md:p-8 flex-grow">
+    <div className="text-center mb-6 sm:mb-8">
+      <h2 className="text-2xl font-bold text-slate-700 mb-2">
+        Tu Caja de Herramientas
+      </h2>
+      <p className="text-base text-slate-600 max-w-xl mx-auto">
+        Elige una utilidad para comenzar
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 ">
+      <ToolCard title="Generador de README.md" description="Crea archivos README profesionales y bien estructurados."  icon={<ReadmeIcon  />} onClick={() => handleSelectTool("readme") } />
+      <ToolCard title="Generador de .gitignore" description="Genera archivos .gitignore optimizados para tu proyecto." icon={<GitignoreIcon  />} onClick={() => handleSelectTool("gitignore")} />
+      <ToolCard title="Convertidor JSON ↔ CSV" description="Transforma datos entre formatos JSON y CSV." icon={<JsonCsvIcon  />} onClick={() => handleSelectTool("jsoncsv")} />
+      <ToolCard title="Minificador de Código" description="Reduce el tamaño de tu HTML, CSS y JavaScript." icon={<CodeMinIcon  />} onClick={() => handleSelectTool("minifier")} />
+      <ToolCard title="Ayudante Comandos Git" description="Accede y copia rápidamente los comandos Git más comunes." icon={<GitCmdIcon />} onClick={() => handleSelectTool("githelper")} />
+      <ToolCard title="Editor de Snippets" description="Crea, guarda y gestiona tus fragmentos de código reutilizables." icon={<SnippetEditorIcon/>} onClick={() => handleSelectTool("snippeteditor")} />
+    </div>
+  </section>
+);
+
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col">
@@ -143,67 +202,64 @@ function App() {
     </div>
 
     {/* --- Menú desplegable --- */}
-    <div className="flex items-center gap-4">
-      {activeTool && (
-        <div ref={menuRef} className="relative">
-          <button
-            onClick={() => setIsMenuOpen(prev => !prev)}
-            type="button"
-            className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-500 hover:bg-blue-500"
-          >
-            {tools.find(t => t.key === activeTool)?.name || "Herramienta"}
-            <ChevronDownIcon className="-mr-1 h-5 w-5 text-blue-200" />
-          </button>
+   <div className="flex items-center gap-4">
+  {activeTool && (
+    <>
+      {/* MENÚ desplegable: aislado en un contenedor relativo */}
+      <div ref={menuRef} className="relative">
+        <button
+          onClick={() => setIsMenuOpen(prev => !prev)}
+          type="button"
+          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-500 hover:bg-blue-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+        >
+          {tools.find(t => t.key === activeTool)?.name || "Herramienta"}
+          <ChevronDownIcon className="-mr-1 h-5 w-5 text-blue-200" />
+        </button>
 
-          {isMenuOpen && (
-            <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none animate-fade-in-down">
-              <div className="py-1">
-                {tools.map((tool) => (
-                  <button
-                    key={tool.key}
-                    onClick={() => handleSelectTool(tool.key)}
-                    className={`block w-full text-left px-4 py-2 text-sm transition-colors ${activeTool === tool.key ? 'bg-blue-500 text-white font-semibold' : 'text-gray-700 hover:bg-gray-100'}`}
-                  >
-                    {tool.name}
-                  </button>
-                ))}
-                <div className="my-1 h-px bg-gray-200" />
+        {isMenuOpen && (
+          <div className="absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 animate-fade-in-down">
+            <div className="py-1">
+              {tools.map((tool) => (
                 <button
-                  onClick={handleGoToToolbox}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  key={tool.key}
+                  onClick={() => handleSelectTool(tool.key)}
+                  className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
+                    activeTool === tool.key
+                      ? "bg-blue-500 text-white font-semibold"
+                      : "text-gray-700 hover:bg-gray-100"
+                  } cursor-pointer`}
                 >
-                  &larr; Volver al Toolbox
+                  {tool.name}
                 </button>
-              </div>
+              ))}
             </div>
-          )}
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+      </div>
+
+      {/* Botón de volver, ahora fuera y bien alineado */}
+      <button
+        onClick={handleGoToToolbox}
+        className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        ← Volver al Toolbox
+      </button>
+    </>
+  )}
+</div>
+
+
   </div>
 </header>
 
 
       {notification.message && (<div className={`fixed top-24 right-5 z-50 p-4 rounded-md shadow-lg text-white transition-all duration-300 transform ${notification.message ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'} ${notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`} role="alert">{notification.message}</div>)}
 
-      <main className="container mx-auto p-4 sm:p-6 md:p-8 flex-grow">
-        {!activeTool ? (
-          <>
-            <div className="text-center mb-10 sm:mb-12"><h2 className="text-3xl sm:text-4xl font-bold text-slate-700 mb-3">Tu Caja de Herramientas para Desarrolladores</h2><p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">Selecciona una herramienta para empezar a optimizar tu flujo de trabajo.</p></div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              <ToolCard title="Generador de README.md" description="Crea archivos README profesionales y bien estructurados." icon={<ReadmeIcon />} onClick={() => handleSelectTool('readme')}/>
-              <ToolCard title="Generador de .gitignore" description="Genera archivos .gitignore optimizados para tu proyecto." icon={<GitignoreIcon />} onClick={() => handleSelectTool('gitignore')}/>
-              <ToolCard title="Convertidor JSON ↔ CSV" description="Transforma datos entre formatos JSON y CSV." icon={<JsonCsvIcon />} onClick={() => handleSelectTool('jsoncsv')}/>
-              <ToolCard title="Minificador de Código" description="Reduce el tamaño de tu HTML, CSS y JavaScript." icon={<CodeMinIcon />} onClick={() => handleSelectTool('minifier')}/>
-              <ToolCard title="Ayudante Comandos Git" description="Accede y copia rápidamente los comandos Git más comunes." icon={<GitCmdIcon />} onClick={() => handleSelectTool('githelper')}/>
-              <ToolCard title="Editor de Snippets" description="Crea, guarda y gestiona tus fragmentos de código reutilizables." icon={<SnippetEditorIcon />} onClick={() => handleSelectTool('snippeteditor')}/>
-            </div>
-        
-          </>
-        ) : (
-          renderActiveTool()
-        )}
-      </main>
+    <main className="flex-grow">
+  {pantalla === "inicio" ? <PantallaInicio /> : !activeTool ? <PantallaHerramientas /> : renderActiveTool()}
+</main>
+
+
 
 <footer className="bg-slate-800 text-slate-300 px-6 py-4 mt-auto shadow-inner">
   <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">

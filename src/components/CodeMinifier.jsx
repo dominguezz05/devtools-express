@@ -174,7 +174,7 @@ useEffect(() => {
           <button 
             type="button" 
             onClick={handleMinify} 
-            className={`${primaryButtonClasses(isLoading || !code.trim())} w-full sm:w-auto`}
+            className={`${primaryButtonClasses(isLoading || !code.trim())} w-full sm:w-auto cursor-pointer`}
             disabled={isLoading || !code.trim()}
           >
             {isLoading ? (
@@ -186,7 +186,7 @@ useEffect(() => {
             <span className="ml-2">{isLoading ? "Minificando..." : "Minificar Código"}</span>
           </button>
           {(code || minified || error) && (
-            <button type="button" onClick={handleClearAll} title="Limpiar todo" className="p-2.5 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm ml-auto sm:ml-4">
+            <button type="button" onClick={handleClearAll} title="Limpiar todo" className="p-2.5 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm ml-auto sm:ml-4 cursor-pointer">
               <ClearIcon />
             </button>
           )}

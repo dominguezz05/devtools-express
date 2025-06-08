@@ -144,7 +144,7 @@ useEffect(() => {
              <button
               type="button"
               onClick={handleGenerate}
-              className={`${buttonClasses} whitespace-nowrap ${isLoading || !languageInput.trim() ? "opacity-60 cursor-not-allowed" : ""}`}
+              className={`${buttonClasses} whitespace-nowrap ${isLoading || !languageInput.trim() ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}` }
               disabled={isLoading || !languageInput.trim()}
             >
               {isLoading ? <LoadingSpinner /> : <GenerateIcon />}
@@ -154,7 +154,7 @@ useEffect(() => {
                <button
                   type="button"
                   onClick={handleClear}
-                  className="p-2.5 text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 transition"
+                  className="p-2.5 text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 transition cursor-pointer"
                   title="Limpiar"
                   disabled={isLoading}
               >

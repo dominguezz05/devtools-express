@@ -167,14 +167,14 @@ function JsonCsvConverter() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 items-center">
-          <button type="button" onClick={convertToCSV} className={`${primaryButtonClasses(!input.trim())} w-full sm:w-auto`} disabled={!input.trim()}>
+          <button type="button" onClick={convertToCSV} className={`${primaryButtonClasses(!input.trim())} w-full sm:w-auto cursor-pointer`} disabled={!input.trim()}>
             <ConvertIcon /> <span className="ml-2">JSON → CSV</span>
           </button>
-          <button type="button" onClick={convertToJSON} className={`${primaryButtonClasses(!input.trim()).replace('bg-blue-600 hover:bg-blue-700 focus:ring-blue-500','bg-green-600 hover:bg-green-700 focus:ring-green-500')} w-full sm:w-auto`} disabled={!input.trim()}>
+          <button type="button" onClick={convertToJSON} className={`${primaryButtonClasses(!input.trim()).replace('bg-blue-600 hover:bg-blue-700 focus:ring-blue-500','bg-green-600 hover:bg-green-700 focus:ring-green-500 cursor-pointer')} w-full sm:w-auto`} disabled={!input.trim()}>
             <ConvertIcon /> <span className="ml-2">CSV → JSON</span>
           </button>
           {(input || output || error) && (
-            <button type="button" onClick={handleClearAll} title="Limpiar todo" className="p-2.5 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm ml-auto sm:ml-4">
+            <button type="button" onClick={handleClearAll} title="Limpiar todo" className="p-2.5 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm ml-auto sm:ml-4 cursor-pointer">
               <ClearIcon />
             </button>
           )}
