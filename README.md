@@ -1,12 +1,82 @@
-# React + Vite
+# 🚀 DevTools Express
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Una suite web de herramientas esenciales para desarrolladores modernos. Rápido, modular y en constante expansión.
 
-Currently, two official plugins are available:
+![Banner](./public/og-image.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🛠️ ¿Qué es DevTools Express?
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**DevTools Express** es una aplicación web con un conjunto de utilidades pensadas para facilitar el día a día de cualquier desarrollador. Todo accesible desde un único panel, sin necesidad de instalar nada.
+
+---
+
+## ⚙️ Funcionalidades principales
+
+- ✅ Generador de archivos `README.md` con estructura profesional.
+- ✅ Conversor JSON ↔ CSV fácil de usar.
+- ✅ Minificador de código HTML, CSS y JS.
+- ✅ Generador de comandos Git habituales.
+- ✅ Editor de snippets con búsqueda y filtrado.
+- ✅ Exportación e importación de configuraciones `.json`.
+- ✅ Ayuda contextual integrada por herramienta.
+- ✅ Interfaz adaptable y accesible (modo oscuro próximamente).
+
+---
+
+## 🧪 Stack tecnológico
+
+- ⚛️ **React + Vite**
+- 🎨 **Tailwind CSS + ShadCN UI**
+- 🧠 **React Router, Zustand**
+- 📦 **pnpm**
+- 📊 **Recharts**
+- 🌐 **SEO optimizado**
+- 🚀 Preparado para despliegue en Vercel o Netlify
+
+---
+
+## 📁 Estructura del proyecto
+
+devtools-express/
+├── public/
+│ └── og-image.png
+├── src/
+│ ├── components/
+│ ├── tools/
+│ ├── utils/
+│ └── App.jsx
+├── index.html
+└── vite.config.js
+
+---
+
+## 🚀 Cómo usar
+
+```bash
+# Clona el proyecto
+git clone https://github.com/dominguezz05/devtools-express.git
+cd devtools-express
+
+# Instala dependencias
+pnpm install
+
+# Inicia el proyecto en local
+pnpm dev
+```
+
+---
+
+## 🛡️ Licencia
+Este proyecto está licenciado bajo la MIT License. Puedes usarlo, modificarlo y distribuirlo libremente. Ver el archivo LICENSE para más detalles.
+
+---
+
+## 🙌 Autor
+Desarrollado con pasión por Iker Domínguez
+
+---
+
+## ⭐ ¿Te gusta el proyecto?
+Ayúdame con una ⭐ en GitHub o comparte esta herramienta con otros desarrolladores. ¡Gracias!
