@@ -30,13 +30,24 @@ const ChevronDownIcon = ({className="w-5 h-5"}) => (<svg xmlns="http://www.w3.or
 // --- Fin Iconos ---
 
 // --- Componente ToolCard ---
-const ToolCard = ({ title, description, icon, onClick }) => (
-  <button onClick={onClick} type="button" className="cursor-pointer bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out text-left w-full flex flex-col items-center md:items-start transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+const ToolCard = ({ title, description, icon, onClick, isHovered, isDimmed }) => (
+  <button
+    onClick={onClick}
+    type="button"
+    className={`cursor-pointer bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out text-left w-full h-full flex flex-col items-center md:items-start
+      transform-gpu will-change-transform
+      ${isHovered ? "ring-2 ring-blue-400 scale-105 z-10" : ""} 
+      ${isDimmed ? "opacity-50" : "opacity-100"}
+      hover:scale-105`}
+  >
     <div className="mb-4">{icon}</div>
     <h3 className="text-xl font-semibold text-slate-800 mb-2 text-center md:text-left">{title}</h3>
     <p className="text-slate-600 text-sm text-center md:text-left">{description}</p>
   </button>
 );
+
+
+
 // --- Fin Componente ToolCard ---
 
 // --- Lista de herramientas para el menú de navegación ---
@@ -142,46 +153,77 @@ const PantallaInicio = () => (
     </video>
 
     {/* Contenido superpuesto centrado */}
-    <div className="relative z-10 bg-white/50 backdrop-blur-sm p-8 rounded-xl shadow-xl max-w-3xl text-center flex flex-col items-center">
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 mb-6">
-        Bienvenido a  DevTools Express
-      </h1>
-      <p className="text-lg sm:text-xl text-slate-600">
-        Automatiza tareas, crea archivos y acelera tu flujo de trabajo como desarrollador.
-      </p>
-      <button
-        onClick={() => setPantalla("herramientas")}
-        className="mt-10 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 text-lg font-semibold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
-      >
-        🚀 Empezar
-      </button>
-    </div>
+ <div className="relative z-10 bg-white/70 backdrop-blur-md p-10 rounded-2xl shadow-2xl max-w-3xl text-center flex flex-col items-center">
+  <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 mb-6 drop-shadow-sm">
+    Bienvenido a <span className="text-blue-700 text-6xl " ><br />DevTools Express</span>
+  </h1>
+  <p className="text-lg sm:text-xl text-slate-700">
+    Automatiza tareas, crea archivos y acelera tu flujo de trabajo como desarrollador.
+  </p>
+    <button
+      onClick={() => setPantalla("herramientas")}
+      className=" cursor-pointer mt-10 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 hover:shadow-xl hover:scale-105 transition-all duration-300 text-lg font-semibold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+      🚀 Empezar
+    </button>
+</div>
+
   </section>
 );
 
 
 
-const PantallaHerramientas = () => (
-  <section className="container mx-auto p-4 sm:p-6 md:p-8 flex-grow">
-    <div className="text-center mb-6 sm:mb-8">
-      <h2 className="text-2xl font-bold text-slate-700 mb-2">
-        Tu Caja de Herramientas
-      </h2>
-      <p className="text-base text-slate-600 max-w-xl mx-auto">
-        Elige una utilidad para comenzar
-      </p>
-    </div>
+const PantallaHerramientas = () => {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 ">
-      <ToolCard title="Generador de README.md" description="Crea archivos README profesionales y bien estructurados."  icon={<ReadmeIcon  />} onClick={() => handleSelectTool("readme") } />
-      <ToolCard title="Generador de .gitignore" description="Genera archivos .gitignore optimizados para tu proyecto." icon={<GitignoreIcon  />} onClick={() => handleSelectTool("gitignore")} />
-      <ToolCard title="Convertidor JSON ↔ CSV" description="Transforma datos entre formatos JSON y CSV." icon={<JsonCsvIcon  />} onClick={() => handleSelectTool("jsoncsv")} />
-      <ToolCard title="Minificador de Código" description="Reduce el tamaño de tu HTML, CSS y JavaScript." icon={<CodeMinIcon  />} onClick={() => handleSelectTool("minifier")} />
-      <ToolCard title="Ayudante Comandos Git" description="Accede y copia rápidamente los comandos Git más comunes." icon={<GitCmdIcon />} onClick={() => handleSelectTool("githelper")} />
-      <ToolCard title="Editor de Snippets" description="Crea, guarda y gestiona tus fragmentos de código reutilizables." icon={<SnippetEditorIcon/>} onClick={() => handleSelectTool("snippeteditor")} />
+  const cards = [
+    { title: "Generador de README.md", description: "Crea archivos README profesionales y bien estructurados.", icon: <ReadmeIcon />, tool: "readme" },
+    { title: "Generador de .gitignore", description: "Genera archivos .gitignore optimizados para tu proyecto.", icon: <GitignoreIcon />, tool: "gitignore" },
+    { title: "Convertidor JSON ↔ CSV", description: "Transforma datos entre formatos JSON y CSV.", icon: <JsonCsvIcon />, tool: "jsoncsv" },
+    { title: "Minificador de Código", description: "Reduce el tamaño de tu HTML, CSS y JavaScript.", icon: <CodeMinIcon />, tool: "minifier" },
+    { title: "Ayudante Comandos Git", description: "Accede y copia rápidamente los comandos Git más comunes.", icon: <GitCmdIcon />, tool: "githelper" },
+    { title: "Editor de Snippets", description: "Crea, guarda y gestiona tus fragmentos de código reutilizables.", icon: <SnippetEditorIcon />, tool: "snippeteditor" },
+  ];
+
+  return (
+    <section className="container mx-auto p-4 sm:p-6 md:p-8 flex-grow">
+<div className="text-center mb-10 sm:mb-12 relative">
+  <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-800 mb-2 relative inline-block animate-slide-fade">
+    <span className="relative z-10">Tu Caja de Herramientas</span>
+    <span className="absolute top-full left-0 w-full h-full opacity-20 blur-sm transform scale-y-[-1] text-slate-400 pointer-events-none select-none">
+      Tu Caja de Herramientas
+    </span>
+  </h2>
+  <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mt-2 animate-fade-in-slow">
+    Selecciona una utilidad para crear, optimizar o automatizar tu trabajo como desarrollador.
+  </p>
+</div>
+
+
+
+
+ <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
+  {cards.map((card, index) => (
+    <div
+      key={index}
+      className="h-full"
+      onMouseEnter={() => setHoveredIndex(index)}
+      onMouseLeave={() => setHoveredIndex(null)}
+    >
+      <ToolCard
+        {...card}
+        onClick={() => handleSelectTool(card.tool)}
+        isHovered={hoveredIndex === index}
+        isDimmed={hoveredIndex !== null && hoveredIndex !== index}
+      />
     </div>
-  </section>
-);
+  ))}
+</div>
+
+    </section>
+  );
+};
+
 
 
   return (
