@@ -1,6 +1,6 @@
-// src/components/MarkdownPreview.jsx
+
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm'; // For GitHub Flavored Markdown (tables, etc.)
+import remarkGfm from 'remark-gfm'; 
 
 function MarkdownPreview({ content }) {
   console.log("[DEBUG] Contenido recibido en MarkdownPreview:", content);

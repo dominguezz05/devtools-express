@@ -1,8 +1,8 @@
-// src/components/READMEForm.jsx
+
 import { useState , useEffect} from "react";
 import HelpPopup from "./HelpPopup";
 
-// --- FormField MODIFICADO para aceptar y mostrar errores ---
+
 const FormField = ({ id, label, type = "text", placeholder, value, onChange, isTextarea = false, rows = 3, required = false, helpText, error }) => {
   const formElementClasses = "block w-full rounded-md shadow-sm sm:text-sm transition duration-150 ease-in-out";
   const paddingClasses = "py-2.5 px-3";
@@ -73,14 +73,14 @@ function READMEForm({ onGenerate, initialData = {} }) {
     projectVersion: initialData.projectVersion || "1.0.0",
   });
   
-  // --- NUEVO: Estado para los errores de validación ---
+  
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
     
-    // Limpiar el error para el campo actual en cuanto el usuario empieza a escribir
+    
     if (errors[name]) {
       setErrors(prevErrors => {
         const newErrors = { ...prevErrors };
@@ -96,7 +96,7 @@ useEffect(() => {
   }
 }, []);
 
-  // --- NUEVO: Función para validar el formulario ---
+
   const validateForm = () => {
     const newErrors = {};
     if (!form.title.trim()) {
@@ -105,7 +105,7 @@ useEffect(() => {
     if (!form.description.trim()) {
       newErrors.description = "La descripción del proyecto es obligatoria.";
     }
-    // Puedes añadir más validaciones aquí si quieres
+    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Devuelve true si no hay errores
@@ -119,7 +119,7 @@ const handleSubmit = (e) => {
     console.log("[DEBUG] Formulario válido, datos enviados:");
     console.log(form);
 
-    onGenerate(form); // Esto debe pasar el objeto al padre
+    onGenerate(form); 
   } else {
     console.warn("[DEBUG] Formulario inválido. Errores:");
     console.warn(errors);

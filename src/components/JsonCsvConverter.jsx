@@ -56,13 +56,13 @@ function JsonCsvConverter() {
     setCopyStatus('idle');
   };
   
-  // Función de validación centralizada
+ 
   const validateInput = () => {
     if (!input.trim()) {
         setError("❌ El campo de entrada está vacío.");
         return false;
     }
-    setError(""); // Limpia cualquier error anterior si la validación pasa
+    setError(""); 
     return true;
   }
 
@@ -140,8 +140,7 @@ function JsonCsvConverter() {
   }
 }, []);
 
-  const handleCopyOutput = async () => { /* ... tu lógica existente ... */ };
-  const handleDownloadOutput = () => { /* ... tu lógica existente ... */ };
+
 
   return (
     <div className={cardContainerClasses}>
@@ -156,7 +155,7 @@ function JsonCsvConverter() {
           <label htmlFor="json-csv-input" className="block text-sm font-medium text-gray-700 mb-1">Entrada:</label>
           <textarea
             id="json-csv-input"
-            // --- ESTILO CONDICIONAL AÑADIDO AQUÍ ---
+            
             className={`${textareaClasses} h-40 resize-y ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
             placeholder={`Pega aquí JSON o CSV. Ejemplos:\nJSON: [{ "id": 1, "valor": "abc" }]\nCSV: id,valor\\n1,abc`}
             value={input}

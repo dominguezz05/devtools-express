@@ -111,7 +111,7 @@ const performDelete = () => {
 };
 
 
-  // --- LÓGICA DE IMPORT/EXPORT AÑADIDA ---
+  // --- LÓGICA DE IMPORT/EXPORT ---
   const exportSnippets = () => {
     if (snippets.length === 0) {
       showNotification("❌ No hay snippets para exportar.", "error");
@@ -262,7 +262,7 @@ const performDelete = () => {
 )}
 
 
-          {/* --- SECCIÓN DE IMPORT/EXPORT AÑADIDA --- */}
+          {/* --- SECCIÓN DE IMPORT/EXPORT  --- */}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <h3 className="text-md font-medium text-gray-700 mb-3">Gestión de Snippets</h3>
             <div className="flex flex-col sm:flex-row gap-2 mb-2">

@@ -1,5 +1,3 @@
-// src/utils/snippetStorage.js
-
 const STORAGE_KEY = "devtools_snippets";
 
 /**
@@ -34,10 +32,7 @@ export function getSnippets() {
 }
 
 /**
- * Elimina un snippet del localStorage basado en su ID único.
- * NOTA: Con la lógica actual en App.jsx, esta función no se usa directamente,
- * ya que la eliminación se maneja en el estado de React y `useEffect` se encarga de guardar.
- * Sin embargo, es una buena práctica tenerla para una gestión completa.
+
  * @param {string} snippetId - El ID del snippet a eliminar.
  */
 export function deleteSnippet(snippetId) {

@@ -1,14 +1,14 @@
 // src/components/HelpPanel.jsx
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Info, X } from "lucide-react"; // Usando los iconos directamente
+import { Info, X } from "lucide-react"; 
 
 function HelpPanel() {
   const [isOpen, setIsOpen] = useState(false);
-  const triggerRef = useRef(null); // Ref para el botón que abre el panel
-  const panelRef = useRef(null); // Ref para el panel en sí
+  const triggerRef = useRef(null); 
+  const panelRef = useRef(null); 
 
-  // Efecto para manejar el cierre con la tecla 'Escape'
+  
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -113,7 +113,7 @@ function HelpPanel() {
           </div>
         </div>
       </div>,
-      document.body // El portal se renderiza en el body
+      document.body 
     )
   );
 

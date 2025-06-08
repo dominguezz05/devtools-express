@@ -1,4 +1,3 @@
-// src/components/CopyButton.jsx
 import { useState, useEffect, useRef } from "react";
 
 // --- Icons ---
@@ -19,7 +18,6 @@ const ErrorIcon = () => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
   </svg>
 );
-// --- End Icons ---
 
 function CopyButton({ content, buttonText = "Copiar Markdown", successText = "¡Copiado!", errorText = "Error al copiar" }) {
   const [status, setStatus] = useState("idle"); // 'idle', 'copied', 'error'
@@ -42,18 +40,15 @@ function CopyButton({ content, buttonText = "Copiar Markdown", successText = "¡
 
   useEffect(() => {
     if (status === "copied" || status === "error") {
-      // Clear previous timeout if any
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      // Set new timeout
       timeoutRef.current = setTimeout(() => {
         setStatus("idle");
         setLiveRegionMessage(""); // Clear message after timeout
       }, 2500); // Reset after 2.5 seconds
     }
 
-    // Cleanup timeout on component unmount or if status changes before timeout
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -85,18 +80,17 @@ function CopyButton({ content, buttonText = "Copiar Markdown", successText = "¡
   return (
     <>
       <button
-        type="button" // Good practice for buttons not submitting a form
+        type="button" 
         onClick={handleCopy}
-        disabled={!content || status !== "idle"} // Disable if no content or if in a temporary state
+        disabled={!content || status !== "idle"} 
         className={`flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
           ${currentBgColors}
           ${(!content || status !== 'idle') ? "opacity-75 cursor-not-allowed" : ""}`}
-        aria-describedby="copy-status-message" // For more context if needed, though aria-live is primary
+        aria-describedby="copy-status-message" 
       >
         {currentIcon}
         <span className="ml-2">{currentText}</span>
       </button>
-      {/* Visually hidden live region for screen reader announcements */}
       <span id="copy-status-message" className="sr-only" aria-live="polite" aria-atomic="true">
         {liveRegionMessage}
       </span>

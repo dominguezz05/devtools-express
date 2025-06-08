@@ -34,7 +34,6 @@ function CodeMinifier() {
   const DownloadIconMini = () => <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m0 0l-4-4m4 4l4-4m-8 6h8a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
   const inputClasses = "block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500";
   
-  // Función helper de copiado para mantener consistencia
   const copyToClipboard = async (text, onSuccess, onError) => {
       try { await navigator.clipboard.writeText(text); onSuccess(); }
       catch (err) { console.error("Error al copiar:", err); onError(); }
@@ -51,12 +50,10 @@ function CodeMinifier() {
   }, [code, language]);
 
   const handleMinify = async () => {
-    // --- LÓGICA DE VALIDACIÓN ---
     if (!code.trim()) {
       setError("❌ El campo de código está vacío.");
       return;
     }
-    // --- FIN VALIDACIÓN ---
 
     setIsLoading(true);
     setError(""); // Limpiamos el error si la validación pasa
@@ -65,7 +62,6 @@ function CodeMinifier() {
 
     try {
       let resultText = "";
-      // Usamos una función interna simple para HTML para evitar errores de dependencias de Node
       const minifyHtmlBrowser = (htmlString) => htmlString.replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
 
       if (language === "html") {
@@ -108,8 +104,7 @@ const handleClearAll = () => {
   setCopyStatus("idle");
 };
 
-  const handleCopyOutput = () => { /* ...tu lógica existente... */ };
-  const handleDownloadOutput = () => { /* ...tu lógica existente... */ };
+  
 const handleClearHistory = () => {
   clearHistory(TOOL_NAME);     // Borra del localStorage
   setHistory([]);              // Limpia el estado local
@@ -156,13 +151,12 @@ useEffect(() => {
           <label htmlFor="minifier-input" className="block text-sm font-medium text-gray-700 mb-1">Código Original:</label>
           <textarea
             id="minifier-input"
-            // --- ESTILO CONDICIONAL AÑADIDO ---
             className={`${textareaClasses} h-48 ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
             placeholder={`Pega tu código ${language.toUpperCase()} aquí`}
             value={code}
             onChange={(e) => {
                 setCode(e.target.value);
-                if (error) setError(""); // Limpiar error al escribir
+                if (error) setError(""); 
             }}
             disabled={isLoading}
             aria-invalid={!!error}

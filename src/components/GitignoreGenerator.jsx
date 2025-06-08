@@ -26,7 +26,7 @@ function GitignoreGenerator() {
   const [error, setError] = useState(null);
   const [availableLanguages, setAvailableLanguages] = useState([]);
   const [copyStatus, setCopyStatus] = useState('');
-  const [showHelp, setShowHelp] = useState(false); // Tu estado de ayuda
+  const [showHelp, setShowHelp] = useState(false); 
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -52,7 +52,6 @@ useEffect(() => {
   }
 }, []);
   const handleGenerate = useCallback(async () => {
-    // La validación ya estaba aquí, ahora el 'error' se usará para el estilo
     if (!languageInput.trim()) {
       setError("Por favor, introduce uno o más lenguajes/frameworks.");
       return;
@@ -96,8 +95,7 @@ useEffect(() => {
     setIsLoading(false);
   };
 
-  const handleCopyToClipboard = async () => { /* ... tu lógica existente ... */ };
-  const handleDownload = () => { /* ... tu lógica existente ... */ };
+  
   
   const inputClasses = "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 px-3 transition duration-150 ease-in-out";
   const buttonClasses = "flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out";
@@ -125,10 +123,9 @@ useEffect(() => {
               value={languageInput}
               onChange={(e) => {
                 setLanguageInput(e.target.value);
-                if (error) setError(null); // Tu lógica de limpieza de error ya estaba aquí, ¡perfecto!
+                if (error) setError(null); 
               }}
               placeholder="Ej: node,python,react,vscode"
-              // --- ESTILO CONDICIONAL AÑADIDO AQUÍ ---
               className={`${inputClasses} ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
               disabled={isLoading}
               aria-invalid={!!error}

@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 
-// Imports para la funcionalidad del historial
 import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
 import HistoryPanel from "./HistoryPanel";
 import HelpPopup from "./HelpPopup";
 
 function GitCommandHelper() {
   // --- Tu código de constantes y componentes internos ---
-  const [showHelp, setShowHelp] = useState(false); // Modificado para que no aparezca por defecto
+  const [showHelp, setShowHelp] = useState(false); 
   const toolTitleClasses = "text-2xl font-semibold text-gray-800";
   const toolDescriptionClasses = "text-gray-600 text-sm md:text-base";
   const cardContainerClasses = "my-8 bg-white p-6 md:p-8 rounded-xl shadow-md sm:shadow-lg space-y-6";
@@ -59,7 +58,6 @@ function GitCommandHelper() {
   const [history, setHistory] = useState([]);
   const TOOL_NAME = "git-command-helper";
   
-  // --- NUEVO: Estado para el error de validación del input ---
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -73,16 +71,15 @@ function GitCommandHelper() {
 
   const handleSelectHistory = (historyEntry) => {
     setCustomCommand(historyEntry);
-    if (error) setError(null); // Limpiar error al seleccionar del historial
+    if (error) setError(null); 
   };
 
   const handleCustomCopy = () => {
-    // --- VALIDACIÓN AÑADIDA ---
     if (!customCommand.trim()) {
         setError("El comando personalizado no puede estar vacío.");
         return;
     }
-    setError(null); // Limpiar error si la validación pasa
+    setError(null); 
 
     copyToClipboard(customCommand,
       () => {
@@ -98,7 +95,7 @@ function GitCommandHelper() {
   const handleClearCustom = () => {
     setCustomCommand("");
     setCustomCopyStatus('idle');
-    if (error) setError(null); // Limpiar error al borrar
+    if (error) setError(null); 
   };
 useEffect(() => {
   const dismissed = localStorage.getItem("help-dismissed-githelper");
@@ -140,14 +137,13 @@ useEffect(() => {
             <input
                 id="custom-git-command"
                 type="text"
-                // --- ESTILO CONDICIONAL AÑADIDO ---
                 className={`${inputClasses} ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
                 placeholder="Escribe tu comando Git aquí (ej. git checkout -b nueva-rama)"
                 value={customCommand}
                 onChange={(e) => {
                     setCustomCommand(e.target.value);
                     if (customCopyStatus !== 'idle') setCustomCopyStatus('idle');
-                    if (error) setError(null); // Limpiar error al escribir
+                    if (error) setError(null); 
                 }}
                 aria-invalid={!!error}
                 aria-describedby={error ? "git-command-error" : undefined}
@@ -158,7 +154,6 @@ useEffect(() => {
                 </button>
             )}
         </div>
-        {/* --- MENSAJE DE ERROR AÑADIDO --- */}
         {error && <p id="git-command-error" className="text-xs text-red-600 mb-2">{error}</p>}
         
         <button
