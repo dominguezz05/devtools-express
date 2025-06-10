@@ -15,7 +15,7 @@ import { saveSnippets, getSnippets } from "./utils/snippetStorage";
 import HelpPanel from './components/HelpPanel'; 
 import FancyButton from "./components/FancyButton";
 import { translations } from "./i18n";
-
+import Header from "./components/Header"; 
 
 
 
@@ -78,8 +78,7 @@ function App() {
 const lang = settings.language || "es";
 const t = translations[lang];
   // --- NUEVO: Estado y lógica para el menú desplegable ---
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+
 // --- Lista de herramientas para el menú de navegación ---
 const tools = [
   { key: 'readme', name: t.tools.readme },
@@ -89,18 +88,7 @@ const tools = [
   { key: 'githelper', name: t.tools.githelper },
   { key: 'snippeteditor', name: t.tools.snippeteditor },
 ];
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menuRef]);
-  // --- FIN: Lógica del menú ---
+
 
   // Efectos de persistencia
   useEffect(() => { saveSnippets(snippets); }, [snippets]);
@@ -182,7 +170,7 @@ const tools = [
     }
   };
 const PantallaInicio = () => (
-  <section className="relative flex flex-col items-center justify-center text-center min-h-[calc(103vh-160px)] px-4 py-10 overflow-hidden">
+  <section className="relative flex flex-col items-center justify-center text-center min-h-[calc(104.1vh-160px)] px-4 py-10 overflow-hidden">
     
     {/* Fondo de vídeo */}
     <video
@@ -285,82 +273,15 @@ const cards = tools.map((tool) => ({
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col">
-     <header className="bg-blue-700 text-white shadow-lg sticky top-0 z-50">
-  <div className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-    
-    {/* Logo + Título */}
-    <div className="flex items-center gap-3 cursor-pointer" onClick={handleGoToToolbox}>
-      <img
-        src="/logoDev.png"
-        alt="DevTools Express Logo"
-        className="h-10 sm:h-12 w-auto max-w-none transition-opacity hover:opacity-90"
+          <Header
+        activeTool={activeTool}
+        tools={tools}
+        settings={settings}
+        setSettings={setSettings}
+        handleGoToToolbox={handleGoToToolbox}
+        handleSelectTool={handleSelectTool}
+        t={t}
       />
-      <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight">
-        DevTools Express
-      </h1>
-    </div>
-<select
-  value={settings.language || "es"}
-  onChange={(e) =>
-    setSettings({ ...settings, language: e.target.value })
-  }
-  className="bg-blue-600 text-white text-sm px-2 py-1 rounded-md"
->
-  <option value="es">ES</option>
-  <option value="en">EN</option>
-</select>
-
-    {/* --- Menú desplegable --- */}
-   <div className="flex items-center gap-4">
-  {activeTool && (
-    <>
-      {/* MENÚ desplegable: aislado en un contenedor relativo */}
-      <div ref={menuRef} className="relative">
-        <button
-          onClick={() => setIsMenuOpen(prev => !prev)}
-          type="button"
-          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-500 hover:bg-blue-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-        >
-          {tools.find(t => t.key === activeTool)?.name || "Herramienta"}
-          <ChevronDownIcon className="-mr-1 h-5 w-5 text-blue-200" />
-        </button>
-
-        {isMenuOpen && (
-          <div className="absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 animate-fade-in-down">
-            <div className="py-1">
-              {tools.map((tool) => (
-                <button
-                  key={tool.key}
-                  onClick={() => handleSelectTool(tool.key)}
-                  className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                    activeTool === tool.key
-                      ? "bg-blue-500 text-white font-semibold"
-                      : "text-gray-700 hover:bg-gray-100"
-                  } cursor-pointer`}
-                >
-                  {tool.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Botón de volver, ahora fuera y bien alineado */}
-      <button
-        onClick={handleGoToToolbox}
-        className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-      {t.back}
-
-      </button>
-    </>
-  )}
-</div>
-
-
-  </div>
-</header>
 
 
       {notification.message && (<div className={`fixed top-24 right-5 z-50 p-4 rounded-md shadow-lg text-white transition-all duration-300 transform ${notification.message ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'} ${notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`} role="alert">{notification.message}</div>)}
