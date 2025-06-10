@@ -16,8 +16,7 @@ import HelpPanel from './components/HelpPanel';
 import FancyButton from "./components/FancyButton";
 import { translations } from "./i18n";
 import Header from "./components/Header"; 
-
-
+import PrettierConfigGenerator from "./components/PrettierConfigGenerator";
 
 
 // --- Iconos para la UI y Tarjetas de Herramientas ---
@@ -31,6 +30,8 @@ const PreviewIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h
 const ExportIcon = ({className="w-5 h-5"}) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75Z" /></svg>);
 const ImportIcon = ({className="w-5 h-5"}) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75Z" /></svg>);
 const ChevronDownIcon = ({className="w-5 h-5"}) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}><path fillRule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clipRule="evenodd" /></svg>);
+
+const PrettierIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg> );
 // --- Fin Iconos ---
 
 // --- Componente ToolCard ---
@@ -86,7 +87,8 @@ const tools = [
   { key: 'jsoncsv', name: t.tools.jsoncsv },
   { key: 'minifier', name: t.tools.minifier },
   { key: 'githelper', name: t.tools.githelper },
-  { key: 'snippeteditor', name: t.tools.snippeteditor },
+  { key: 'snippeteditor', name: t.tools.snippeteditor }, 
+   { key: 'prettier', name: t.tools.prettier },
 ];
 
 
@@ -166,6 +168,7 @@ const tools = [
       case 'minifier': return <CodeMinifier lang={lang}/>;
       case 'githelper': return <GitCommandHelper lang={lang}/>;
       case 'snippeteditor': return <SnippetEditor snippets={snippets} setSnippets={setSnippets} settings={settings} lang={lang} />;
+      case 'prettier': return <PrettierConfigGenerator lang={lang} />; 
       default: return null;
     }
   };
@@ -216,6 +219,7 @@ const PantallaHerramientas = () => {
     case "minifier": return <CodeMinIcon />;
     case "githelper": return <GitCmdIcon />;
     case "snippeteditor": return <SnippetEditorIcon />;
+    case "prettier": return <PrettierIcon />; 
     default: return null;
   }
 };

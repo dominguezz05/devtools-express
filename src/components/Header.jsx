@@ -10,6 +10,7 @@ function Header({
   setSettings,
   handleGoToToolbox,
   handleSelectTool,
+  
   t // Objeto de traducción
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

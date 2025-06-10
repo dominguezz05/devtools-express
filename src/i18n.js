@@ -22,6 +22,7 @@ export const translations = {
       minifier: "Minificador de Código",
       githelper: "Ayudante Git",
       snippeteditor: "Editor de Snippets",
+      prettier: "Generador Config Prettier",
     },
 
     help: {
@@ -199,7 +200,43 @@ export const translations = {
           log: "Muestra el historial de commits de forma concisa.",
         },
       },
-
+      prettier: {
+        title: "Generador de Configuración de Prettier",
+        description:
+          "Personaliza las reglas de formato de tu código y genera tu archivo .prettier.json al instante.",
+        optionsTitle: "Opciones de Formato",
+        outputTitle: "Tu archivo .prettier.json:",
+        options: {
+          printWidth: {
+            label: "Ancho de Línea",
+            description: "Máximo de caracteres por línea.",
+          },
+          tabWidth: {
+            label: "Ancho de Tabulación",
+            description: "Número de espacios por indentación.",
+          },
+          useTabs: {
+            label: "Usar Tabuladores",
+            description: "Indentar con tabuladores en vez de espacios.",
+          },
+          semi: {
+            label: "Punto y Coma",
+            description: "Añadir punto y coma al final de las líneas.",
+          },
+          singleQuote: {
+            label: "Comillas Simples",
+            description: "Usar comillas simples ('') en vez de dobles (\"\").",
+          },
+          bracketSpacing: {
+            label: "Espacios en Corchetes",
+            description: "Añadir espacios: { foo: bar } vs {foo: bar}.",
+          },
+          trailingComma: {
+            label: "Coma Final",
+            description: "Añadir comas al final donde sea posible.",
+          },
+        },
+      },
       HelpPanel: {
         title: "Historial Reciente",
         clearButton: "Limpiar",
@@ -297,6 +334,10 @@ export const translations = {
         description:
           "Crea, guarda y gestiona tus fragmentos de código reutilizables.",
       },
+      prettier: {
+        title: "Generador Config Prettier",
+        description: "Crea tu archivo .prettierrc con una interfaz visual.",
+      },
     },
     download: "Descargar",
     copy: {
@@ -337,6 +378,7 @@ export const translations = {
       minifier: "Code Minifier",
       githelper: "Git Command Helper",
       snippeteditor: "Snippet Editor",
+      prettier: "Prettier Config Generator",
     },
 
     help: {
@@ -366,6 +408,44 @@ export const translations = {
             "Contributions are welcome. Please review the contribution guidelines and code of conduct.",
         },
       },
+      prettier: {
+        title: "Prettier Config Generator",
+        description:
+          "Customize your code formatting rules and generate your .prettier.json file instantly.",
+        optionsTitle: "Formatting Options",
+        outputTitle: "Your .prettier.json file:",
+        options: {
+          printWidth: {
+            label: "Print Width",
+            description: "Max line length.",
+          },
+          tabWidth: {
+            label: "Tab Width",
+            description: "Number of spaces per indentation level.",
+          },
+          useTabs: {
+            label: "Use Tabs",
+            description: "Indent lines with tabs instead of spaces.",
+          },
+          semi: {
+            label: "Semicolons",
+            description: "Add a semicolon at the end of every statement.",
+          },
+          singleQuote: {
+            label: "Single Quotes",
+            description: "Use single quotes instead of double quotes.",
+          },
+          bracketSpacing: {
+            label: "Bracket Spacing",
+            description: "Print spaces between brackets: { foo: bar }.",
+          },
+          trailingComma: {
+            label: "Trailing Comma",
+            description: "Add trailing commas where valid.",
+          },
+        },
+      },
+
       snippeteditor: {
         title: "Snippet Editor",
         description:
@@ -609,6 +689,10 @@ export const translations = {
       snippeteditor: {
         title: "Snippet Editor",
         description: "Create, save, and manage reusable code snippets.",
+      },
+      prettier: {
+        title: "Prettier Config Generator",
+        description: "Create your .prettierrc file with a visual interface.",
       },
     },
     download: "Download",
