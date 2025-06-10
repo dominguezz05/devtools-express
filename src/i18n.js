@@ -23,6 +23,7 @@ export const translations = {
       githelper: "Ayudante Git",
       snippeteditor: "Editor de Snippets",
       prettier: "Generador Config Prettier",
+      cssUnitConverter: "Conversor Unidades CSS",
     },
 
     help: {
@@ -237,6 +238,20 @@ export const translations = {
           },
         },
       },
+      cssUnitConverter: {
+        title: "Conversor de Unidades CSS",
+        description:
+          "Convierte PX a REM y EM fácilmente para tus diseños web responsivos.",
+        remTitle: "Conversión PX ↔ REM",
+        emTitle: "Conversión PX ↔ EM",
+        baseSizeLabel: "Tamaño de Fuente Base (Root)",
+        baseSizeDescription:
+          "Normalmente 16px. Es el font-size de tu elemento <html>.",
+        parentSizeLabel: "Tamaño de Fuente del Padre",
+        parentSizeDescription:
+          "Es el font-size del contenedor directo del elemento.",
+        pixelsLabel: "Píxeles",
+      },
       HelpPanel: {
         title: "Historial Reciente",
         clearButton: "Limpiar",
@@ -338,6 +353,10 @@ export const translations = {
         title: "Generador Config Prettier",
         description: "Crea tu archivo .prettierrc con una interfaz visual.",
       },
+      cssUnitConverter: {
+        title: "Conversor Unidades CSS",
+        description: "Transforma valores entre PX, REM y EM al instante.",
+      },
     },
     download: "Descargar",
     copy: {
@@ -379,6 +398,7 @@ export const translations = {
       githelper: "Git Command Helper",
       snippeteditor: "Snippet Editor",
       prettier: "Prettier Config Generator",
+      cssUnitConverter: "CSS Unit Converter",
     },
 
     help: {
@@ -407,6 +427,20 @@ export const translations = {
           contributing:
             "Contributions are welcome. Please review the contribution guidelines and code of conduct.",
         },
+      },
+      cssUnitConverter: {
+        title: "CSS Unit Converter",
+        description:
+          "Easily convert PX to REM and EM for your responsive web designs.",
+        remTitle: "PX ↔ REM Conversion",
+        emTitle: "PX ↔ EM Conversion",
+        baseSizeLabel: "Base (Root) Font Size",
+        baseSizeDescription:
+          "Usually 16px. It's the font-size of your <html> element.",
+        parentSizeLabel: "Parent Element Font Size",
+        parentSizeDescription:
+          "It's the font-size of the element's direct container.",
+        pixelsLabel: "Pixels",
       },
       prettier: {
         title: "Prettier Config Generator",
@@ -693,6 +727,10 @@ export const translations = {
       prettier: {
         title: "Prettier Config Generator",
         description: "Create your .prettierrc file with a visual interface.",
+      },
+      cssUnitConverter: {
+        title: "CSS Unit Converter",
+        description: "Instantly transform values between PX, REM, and EM.",
       },
     },
     download: "Download",
