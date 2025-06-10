@@ -24,6 +24,7 @@ export const translations = {
       snippeteditor: "Editor de Snippets",
       prettier: "Generador Config Prettier",
       cssUnitConverter: "Conversor Unidades CSS",
+      jwtDecoder: "Decodificador JWT",
     },
 
     help: {
@@ -54,6 +55,16 @@ export const translations = {
           contributing:
             "Las contribuciones son bienvenidas. Por favor, revisa las guías de contribución y el código de conducta.",
         },
+      },
+      jwtDecoder: {
+        title: "Decodificador de JWT",
+        description:
+          "Pega un JSON Web Token para inspeccionar su contenido al instante.",
+        inputLabel: "Token JWT Codificado:",
+        placeholder: "Pega tu token aquí...",
+        errorInvalidFormat:
+          "El formato del token es inválido. Debe contener 3 partes separadas por puntos.",
+        errorInvalidToken: "Error: El token no es válido o está malformado.",
       },
       gitignore: {
         title: "Generador de Gitignore",
@@ -357,6 +368,10 @@ export const translations = {
         title: "Conversor Unidades CSS",
         description: "Transforma valores entre PX, REM y EM al instante.",
       },
+      jwtDecoder: {
+        title: "Decodificador JWT",
+        description: "Inspecciona el contenido de JSON Web Tokens.",
+      },
     },
     download: "Descargar",
     copy: {
@@ -399,6 +414,7 @@ export const translations = {
       snippeteditor: "Snippet Editor",
       prettier: "Prettier Config Generator",
       cssUnitConverter: "CSS Unit Converter",
+      jwtDecoder: "JWT Decoder",
     },
 
     help: {
@@ -427,6 +443,16 @@ export const translations = {
           contributing:
             "Contributions are welcome. Please review the contribution guidelines and code of conduct.",
         },
+      },
+      jwtDecoder: {
+        title: "JWT Decoder",
+        description:
+          "Paste a JSON Web Token to inspect its contents instantly.",
+        inputLabel: "Encoded JWT:",
+        placeholder: "Paste your token here...",
+        errorInvalidFormat:
+          "Invalid token format. It must contain 3 parts separated by dots.",
+        errorInvalidToken: "Error: The token is invalid or malformed.",
       },
       cssUnitConverter: {
         title: "CSS Unit Converter",
@@ -731,6 +757,10 @@ export const translations = {
       cssUnitConverter: {
         title: "CSS Unit Converter",
         description: "Instantly transform values between PX, REM, and EM.",
+      },
+      jwtDecoder: {
+        title: "JWT Decoder",
+        description: "Inspect the contents of JSON Web Tokens.",
       },
     },
     download: "Download",

@@ -18,7 +18,7 @@ import { translations } from "./i18n";
 import Header from "./components/Header"; 
 import PrettierConfigGenerator from "./components/PrettierConfigGenerator";
 import CssUnitConverter from "./components/CssUnitConverter";
-
+import JwtDecoder from "./components/JwtDecoder";
 // --- Iconos para la UI y Tarjetas de Herramientas ---
 const ReadmeIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg> );
 const GitignoreIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636M15.75 5.25V3m0 2.25h-1.5m1.5 0-1.125-1.125M15.75 5.25L14.625 4.125M9 20.25h6M10.5 16.5h3M12 12.75h.008v.008H12v-.008Z" /></svg> );
@@ -32,6 +32,7 @@ const ImportIcon = ({className="w-5 h-5"}) => (<svg xmlns="http://www.w3.org/200
 const ChevronDownIcon = ({className="w-5 h-5"}) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}><path fillRule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clipRule="evenodd" /></svg>);
 const CssUnitIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" /></svg> );
 const PrettierIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg> );
+const JwtIcon = ({ className = "w-12 h-12 text-blue-600" }) => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg> );
 // --- Fin Iconos ---
 
 // --- Componente ToolCard ---
@@ -90,6 +91,7 @@ const tools = [
   { key: 'snippeteditor', name: t.tools.snippeteditor }, 
    { key: 'prettier', name: t.tools.prettier },
    { key: 'cssUnitConverter', name: t.tools.cssUnitConverter }, 
+     { key: 'jwtDecoder', name: t.tools.jwtDecoder },
 ];
 
 
@@ -171,6 +173,7 @@ const tools = [
       case 'snippeteditor': return <SnippetEditor snippets={snippets} setSnippets={setSnippets} settings={settings} lang={lang} />;
       case 'prettier': return <PrettierConfigGenerator lang={lang} />; 
       case 'cssUnitConverter': return <CssUnitConverter lang={lang} />;
+       case 'jwtDecoder': return <JwtDecoder lang={lang} />;
       default: return null;
     }
   };
@@ -223,6 +226,7 @@ const PantallaHerramientas = () => {
     case "snippeteditor": return <SnippetEditorIcon />;
     case "prettier": return <PrettierIcon />; 
      case "cssUnitConverter": return <CssUnitIcon />; 
+      case "jwtDecoder": return <JwtIcon />; 
     default: return null;
   }
 };
