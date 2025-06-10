@@ -1,4 +1,5 @@
 import React from 'react';
+import { translations } from "../i18n";
 
 const DownloadIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -6,16 +7,17 @@ const DownloadIcon = () => (
   </svg>
 );
 
-function DownloadButton({ content, filename = "README.md" }) {
+function DownloadButton({ content, filename = "README.md", lang = "es" }) {
+  const t = translations[lang] || translations["es"];
+
   const handleDownload = () => {
     if (!content) return;
-
     const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = filename;
-    document.body.appendChild(a); 
+    document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
@@ -26,12 +28,12 @@ function DownloadButton({ content, filename = "README.md" }) {
       type="button"
       onClick={handleDownload}
       disabled={!content}
-      className={`flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
+      className={`cursor-pointer flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
         bg-purple-600 hover:bg-purple-700 text-white focus:ring-purple-500
         ${!content ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"}`}
     >
       <DownloadIcon />
-      <span className="ml-2">Descargar</span> {/* Shorter text to fit better with icon */}
+      <span className="ml-2">{t.download}</span>
     </button>
   );
 }

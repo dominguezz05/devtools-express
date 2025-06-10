@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
-
 import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage";
 import HistoryPanel from "./HistoryPanel";
 import HelpPopup from "./HelpPopup";
+import { translations } from "../i18n";
 
-function GitCommandHelper() {
-  // --- Tu código de constantes y componentes internos ---
-  const [showHelp, setShowHelp] = useState(false); 
+function GitCommandHelper({ lang = "es" }) {
+  // --- Objeto de traducciones para este componente ---
+  const t = translations[lang]?.help?.githelper || {};
+  const t_copy = translations[lang]?.copy || {}; // Objeto para textos de copiado genéricos
+
+  // --- Constantes y componentes internos  ---
+  const [showHelp, setShowHelp] = useState(false);
   const toolTitleClasses = "text-2xl font-semibold text-gray-800";
   const toolDescriptionClasses = "text-gray-600 text-sm md:text-base";
   const cardContainerClasses = "my-8 bg-white p-6 md:p-8 rounded-xl shadow-md sm:shadow-lg space-y-6";
@@ -37,19 +41,19 @@ function GitCommandHelper() {
         disabled={status === 'copied'}
       >
         {status === 'copied' ? <CheckIconMini className="w-3.5 h-3.5"/> : <CopyIconMini className="w-3.5 h-3.5"/>}
-        <span className="ml-1">{status === 'copied' ? 'Copiado' : 'Copiar'}</span>
+        <span className="ml-1">{status === 'copied' ? t_copy.success : t_copy.button}</span>
       </button>
     );
   };
-
+  
   const initialCommands = [
-    { id: 'init', cmd: "git init", desc: "Inicializa un nuevo repositorio Git." },
-    { id: 'add', cmd: "git add .", desc: "Añade todos los cambios al área de staging." },
-    { id: 'commit', cmd: 'git commit -m "Tu mensaje descriptivo"', desc: "Guarda los cambios en el repositorio." },
-    { id: 'status', cmd: "git status", desc: "Muestra el estado de los cambios." },
-    { id: 'push', cmd: "git push origin main", desc: "Sube los commits locales al repositorio remoto." },
-    { id: 'pull', cmd: "git pull origin main", desc: "Trae y fusiona cambios del repositorio remoto." },
-    { id: 'log', cmd: "git log --oneline --graph --decorate", desc: "Muestra el historial de commits de forma concisa." },
+    { id: 'init', cmd: "git init" },
+    { id: 'add', cmd: "git add ." },
+    { id: 'commit', cmd: 'git commit -m "Tu mensaje descriptivo"' },
+    { id: 'status', cmd: "git status" },
+    { id: 'push', cmd: "git push origin main" },
+    { id: 'pull', cmd: "git pull origin main" },
+    { id: 'log', cmd: "git log --oneline --graph --decorate" },
   ];
   
   const [customCommand, setCustomCommand] = useState("");
@@ -57,7 +61,6 @@ function GitCommandHelper() {
   const [customCopyStatus, setCustomCopyStatus] = useState('idle');
   const [history, setHistory] = useState([]);
   const TOOL_NAME = "git-command-helper";
-  
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -76,8 +79,8 @@ function GitCommandHelper() {
 
   const handleCustomCopy = () => {
     if (!customCommand.trim()) {
-        setError("El comando personalizado no puede estar vacío.");
-        return;
+      setError(t.errorEmpty); 
+      return;
     }
     setError(null); 
 
@@ -97,59 +100,58 @@ function GitCommandHelper() {
     setCustomCopyStatus('idle');
     if (error) setError(null); 
   };
-useEffect(() => {
-  const dismissed = localStorage.getItem("help-dismissed-githelper");
-  if (!dismissed) {
-    setShowHelp(true);
-  }
-}, []);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem("help-dismissed-githelper");
+    if (!dismissed) {
+      setShowHelp(true);
+    }
+  }, []);
+
   return (
     <div className={cardContainerClasses}>
       <div className="flex justify-between items-center mb-1">
         <div className="flex items-center">
             <GitIcon />
-            <h2 className={`${toolTitleClasses} ml-2`}>Ayudante de Comandos Git</h2>
+            <h2 className={`${toolTitleClasses} ml-2`}>{t.title}</h2>
         </div>
-        
       </div>
-      <p className={toolDescriptionClasses}>
-        Copia rápidamente comandos comunes de Git o prueba y guarda los tuyos.
-      </p>
-
-      <h3 className="text-lg font-medium text-gray-700 mb-3">Comandos Comunes:</h3>
+      <p className={toolDescriptionClasses}>{t.description}</p>
+      
+      <h3 className="text-lg font-medium text-gray-700 mb-3">{t.commonCommandsTitle}</h3>
       <ul className="space-y-3">
-        {commands.map(({ id, cmd, desc }) => (
+        {commands.map(({ id, cmd }) => (
           <li key={id} className="p-3 border border-gray-200 rounded-lg bg-slate-50 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="flex justify-between items-center">
               <code className="text-sm text-indigo-700 bg-indigo-50 px-2 py-1 rounded">{cmd}</code>
               <InlineCopyButton textToCopy={cmd} />
             </div>
-            {desc && <p className="mt-1.5 text-xs text-gray-500">{desc}</p>}
+            {t.commands?.[id] && <p className="mt-1.5 text-xs text-gray-500">{t.commands[id]}</p>}
           </li>
         ))}
       </ul>
 
       <div className="mt-8 pt-6 border-t border-gray-200">
         <label htmlFor="custom-git-command" className="block text-sm font-medium text-gray-700 mb-1">
-            Comando Personalizado:
+          {t.customCommandTitle}
         </label>
         <div className="flex items-center gap-2 mb-2">
             <input
-                id="custom-git-command"
-                type="text"
-                className={`${inputClasses} ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
-                placeholder="Escribe tu comando Git aquí (ej. git checkout -b nueva-rama)"
-                value={customCommand}
-                onChange={(e) => {
-                    setCustomCommand(e.target.value);
-                    if (customCopyStatus !== 'idle') setCustomCopyStatus('idle');
-                    if (error) setError(null); 
-                }}
-                aria-invalid={!!error}
-                aria-describedby={error ? "git-command-error" : undefined}
+              id="custom-git-command"
+              type="text"
+              className={`${inputClasses} ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
+              placeholder={t.placeholder} // TRADUCCIÓN
+              value={customCommand}
+              onChange={(e) => {
+                  setCustomCommand(e.target.value);
+                  if (customCopyStatus !== 'idle') setCustomCopyStatus('idle');
+                  if (error) setError(null); 
+              }}
+              aria-invalid={!!error}
+              aria-describedby={error ? "git-command-error" : undefined}
             />
             {customCommand && (
-                <button type="button" onClick={handleClearCustom} title="Limpiar comando personalizado" className="p-2.5 text-gray-400 hover:text-red-600 rounded-md cursor-pointer">
+                <button type="button" onClick={handleClearCustom} title={t.clearCustomTitle} className="p-2.5 text-gray-400 hover:text-red-600 rounded-md cursor-pointer">
                     <ClearIcon/>
                 </button>
             )}
@@ -164,7 +166,7 @@ useEffect(() => {
         >
           {customCopyStatus === 'copied' ? <CheckIconMini className="w-4 h-4"/> : <CopyIconMini className="w-4 h-4" /> }
           <span className="ml-2">
-            {customCopyStatus === 'copied' ? '¡Comando Copiado!' : customCopyStatus === 'error' ? 'Error al Copiar' : 'Copiar y Guardar'}
+            {customCopyStatus === 'copied' ? t.copySuccess : customCopyStatus === 'error' ? t.copyError : t.copyAndSaveButton}
           </span>
         </button>
         
@@ -172,10 +174,11 @@ useEffect(() => {
           history={history}
           onSelect={handleSelectHistory}
           onClear={handleClearHistory}
+          lang={lang}
         />
       </div>
       {showHelp && (
-        <HelpPopup helpKey="githelper" onClose={() => setShowHelp(false)} />
+        <HelpPopup helpKey="githelper" onClose={() => setShowHelp(false)}lang={lang} />
       )}
     </div>
   );

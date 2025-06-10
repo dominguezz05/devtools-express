@@ -4,6 +4,7 @@ import HistoryPanel from "./HistoryPanel";
 import HelpPopup from "./HelpPopup";
 import CopyButton from "./CopyButton";
 import DownloadButton from "./DownloadButton";
+import { translations } from "../i18n";
 
 // --- Constantes de Estilo y Iconos (definidas fuera del componente) ---
 const cardContainerClasses = "my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-2xl mx-auto";
@@ -20,7 +21,13 @@ const ClearIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" view
 const DownloadIconMini = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>;
 const TOOL_NAME = "json-csv-converter";
 
-function JsonCsvConverter() {
+
+function JsonCsvConverter({ lang = "es" }) {
+  const t = translations[lang]?.help?.jsoncsv || {};
+
+  const common = translations[lang].copy;
+
+
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -30,23 +37,13 @@ function JsonCsvConverter() {
 
   useEffect(() => {
     setHistory(getHistory(TOOL_NAME));
+    const dismissed = localStorage.getItem("help-dismissed-jsoncsv");
+    if (!dismissed) setShowHelp(true);
   }, []);
 
   const updateAndSaveHistory = (newEntry) => {
     saveToHistory(TOOL_NAME, newEntry);
     setHistory(getHistory(TOOL_NAME));
-  };
-
-  const handleClearHistory = () => {
-    clearHistory(TOOL_NAME);
-    setHistory([]);
-  };
-
-  const handleSelectHistory = (historyEntry) => {
-    setInput(historyEntry);
-    setOutput("");
-    setError("");
-    setCopyStatus('idle');
   };
 
   const handleInputChange = (e) => {
@@ -55,50 +52,69 @@ function JsonCsvConverter() {
     if (output) setOutput("");
     setCopyStatus('idle');
   };
-  
- 
+
   const validateInput = () => {
     if (!input.trim()) {
-        setError("❌ El campo de entrada está vacío.");
-        return false;
+      setError(t.errors.emptyInput);
+      return false;
     }
-    setError(""); 
     return true;
-  }
+  };
 
-  const convertToCSV = () => {
-    if (!validateInput()) return;
-    try {
-      let jsonData = JSON.parse(input);
-      if (!Array.isArray(jsonData)) {
-        if (typeof jsonData === 'object' && jsonData !== null) jsonData = [jsonData];
-        else throw new Error("La entrada debe ser un array de objetos JSON o un único objeto JSON.");
+const convertToCSV = () => {
+  if (!validateInput()) return;
+  try {
+    let jsonData = JSON.parse(input);
+
+    // 🧠 Detectar si hay una propiedad que sea un array de objetos (como "snippets")
+    if (!Array.isArray(jsonData)) {
+      const arrayCandidateKey = Object.keys(jsonData).find(
+        key => Array.isArray(jsonData[key]) && typeof jsonData[key][0] === "object"
+      );
+      if (arrayCandidateKey) {
+        jsonData = jsonData[arrayCandidateKey];
+      } else if (typeof jsonData === 'object' && jsonData !== null) {
+        jsonData = [jsonData]; // Caso: objeto plano
+      } else {
+        throw new Error(t.errors.invalidJSON);
       }
-      if (jsonData.length === 0) return setOutput("");
-      const headers = Object.keys(jsonData[0]);
-      const rows = jsonData.map(obj => headers.map(header => {
-        const value = obj[header];
+    }
+
+    if (jsonData.length === 0) return setOutput("");
+
+    const headers = Object.keys(jsonData[0]);
+
+    const rows = jsonData.map(obj =>
+      headers.map(header => {
+        let value = obj[header];
+        if (Array.isArray(value)) {
+          return `"${value.join(",")}"`;
+        }
+        if (typeof value === 'object' && value !== null) {
+          return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+        }
         if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
           return `"${value.replace(/"/g, '""')}"`;
         }
-        return value;
-      }).join(","));
-      setOutput([headers.join(","), ...rows].join("\n"));
-      setCopyStatus('idle');
-      updateAndSaveHistory(input);
-    } catch (err) {
-      setOutput("");
-      setError("❌ Error al convertir a CSV: " + err.message);
-    }
-  };
-  
+        return value ?? "";
+      }).join(",")
+    );
+
+    setOutput([headers.join(","), ...rows].join("\n"));
+    setCopyStatus('idle');
+    updateAndSaveHistory(input);
+  } catch (err) {
+    setOutput("");
+    setError(`${t.errors.csvConversion}: ${err.message}`);
+  }
+};
+
   const convertToJSON = () => {
     if (!validateInput()) return;
     try {
       const lines = input.trim().split("\n");
-      if (lines.length === 0) return setOutput("[]");
       const headerLine = lines.shift();
-      if (!headerLine) throw new Error("El CSV no tiene línea de cabecera.");
+      if (!headerLine) throw new Error(t.errors.noHeader);
       const csvRegex = /(?:^|,)(\"(?:[^"]+|\"\")*\"|[^,]*)/g;
       const parseCsvLine = (line) => {
         const values = [];
@@ -123,7 +139,7 @@ function JsonCsvConverter() {
       updateAndSaveHistory(input);
     } catch (err) {
       setOutput("");
-      setError("❌ Error al convertir a JSON: " + err.message);
+      setError(`${t.errors.jsonConversion}: ${err.message}`);
     }
   };
 
@@ -133,31 +149,33 @@ function JsonCsvConverter() {
     setError("");
     setCopyStatus('idle');
   };
-  useEffect(() => {
-  const dismissed = localStorage.getItem("help-dismissed-jvsoncsv");
-  if (!dismissed) {
-    setShowHelp(true);
-  }
-}, []);
 
+  const handleClearHistory = () => {
+    clearHistory(TOOL_NAME);
+    setHistory([]);
+  };
 
+  const handleSelectHistory = (entry) => {
+    setInput(entry);
+    setOutput("");
+    setError("");
+    setCopyStatus('idle');
+  };
 
   return (
-    <div className={cardContainerClasses}>
+    <div className="my-8 p-6 bg-white shadow-xl rounded-lg w-full max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-1">
-          <h2 className={toolTitleClasses}>Convertidor JSON ↔ CSV</h2>
-          
+        <h2 className="text-2xl font-semibold text-gray-800">{t.title}</h2>
       </div>
-      <p className={toolDescriptionClasses}>Pega tu contenido JSON o CSV y elige la dirección de la conversión.</p>
-      
+      <p className="text-sm text-gray-600 mb-6">{t.subtitle}</p>
+
       <div className="space-y-4">
         <div>
-          <label htmlFor="json-csv-input" className="block text-sm font-medium text-gray-700 mb-1">Entrada:</label>
+          <label htmlFor="json-csv-input" className="block text-sm font-medium text-gray-700 mb-1">{t.inputLabel}</label>
           <textarea
             id="json-csv-input"
-            
-            className={`${textareaClasses} h-40 resize-y ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
-            placeholder={`Pega aquí JSON o CSV. Ejemplos:\nJSON: [{ "id": 1, "valor": "abc" }]\nCSV: id,valor\\n1,abc`}
+            className={`block w-full h-40 resize-y rounded-md border ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'} shadow-sm py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono text-xs`}
+            placeholder={t.placeholder}
             value={input}
             onChange={handleInputChange}
             aria-invalid={!!error}
@@ -166,49 +184,55 @@ function JsonCsvConverter() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 items-center">
-          <button type="button" onClick={convertToCSV} className={`${primaryButtonClasses(!input.trim())} w-full sm:w-auto cursor-pointer`} disabled={!input.trim()}>
-            <ConvertIcon /> <span className="ml-2">JSON → CSV</span>
+          <button
+            onClick={convertToCSV}
+            className={`cursor-pointer inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md shadow-sm ${!input.trim() ? 'bg-gray-400 cursor-not-allowed text-gray-700' : 'bg-blue-600 hover:bg-blue-700 text-white'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+            disabled={!input.trim()}
+          >
+            <span className="mr-2"><ConvertIcon /></span>{t.toCSV}
           </button>
-          <button type="button" onClick={convertToJSON} className={`${primaryButtonClasses(!input.trim()).replace('bg-blue-600 hover:bg-blue-700 focus:ring-blue-500','bg-green-600 hover:bg-green-700 focus:ring-green-500 cursor-pointer')} w-full sm:w-auto`} disabled={!input.trim()}>
-            <ConvertIcon /> <span className="ml-2">CSV → JSON</span>
+          <button
+            onClick={convertToJSON}
+            className={`cursor-pointer inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md shadow-sm ${!input.trim() ? 'bg-gray-400 cursor-not-allowed text-gray-700' : 'bg-green-600 hover:bg-green-700 text-white'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
+            disabled={!input.trim()}
+          >
+            <span className="mr-2 "><ConvertIcon /></span>{t.toJSON}
           </button>
           {(input || output || error) && (
-            <button type="button" onClick={handleClearAll} title="Limpiar todo" className="p-2.5 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm ml-auto sm:ml-4 cursor-pointer">
-              <ClearIcon />
+            <button
+              onClick={handleClearAll}
+              title={t.clear}
+              className="p-2.5 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm ml-auto sm:ml-4 cursor-pointer"
+            >
+              ❌
             </button>
           )}
         </div>
-        
-        {/* El div de error ya funciona con esta lógica */}
-        {error && <div id="converter-error" className={errorAlertClasses} role="alert">{error}</div>}
-        
+
+        {error && <div id="converter-error" className="mt-3 p-3 bg-red-50 border border-red-300 text-red-700 rounded-md text-sm">{error}</div>}
+
         {output && (
           <div>
             <div className="flex justify-between items-center mt-4 mb-1">
-              <label htmlFor="json-csv-output" className="block text-sm font-medium text-gray-700">Salida:</label>
-                <div className="flex gap-2">
-  <CopyButton content={output} buttonText="Copiar" />
-  <DownloadButton content={output} filename=".converter" />
-</div>
+              <label htmlFor="json-csv-output" className="block text-sm font-medium text-gray-700">{t.outputLabel}</label>
+              <div className="flex gap-2">
+                <CopyButton content={output} buttonText={common.button} lang={lang} />
+                <DownloadButton content={output} filename="converted.txt" lang={lang} />
+              </div>
             </div>
             <textarea
               id="json-csv-output"
-              className={`${textareaClasses} h-40 bg-slate-50 resize-y`}
+              className="block w-full h-40 resize-y rounded-md border border-gray-300 shadow-sm py-2.5 px-3 bg-slate-50 font-mono text-xs"
               readOnly
               value={output}
             />
           </div>
         )}
-        <HistoryPanel
-          history={history}
-          onSelect={handleSelectHistory}
-          onClear={handleClearHistory}
-        />
+
+        <HistoryPanel history={history} onSelect={handleSelectHistory} onClear={handleClearHistory} lang={lang} />
       </div>
-      
-      {showHelp && (
-        <HelpPopup helpKey="jsoncsv" onClose={() => setShowHelp(false)} />
-      )}
+
+      {showHelp && <HelpPopup helpKey="jsoncsv" onClose={() => setShowHelp(false)} lang={lang} />}
     </div>
   );
 }

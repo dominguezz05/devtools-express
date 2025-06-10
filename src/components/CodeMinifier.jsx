@@ -6,9 +6,10 @@ import { saveToHistory, getHistory, clearHistory } from "../utils/historyStorage
 import HistoryPanel from "./HistoryPanel";
 import CopyButton from "./CopyButton";
 import DownloadButton from "./DownloadButton";
+import { translations } from "../i18n";
 
 
-function CodeMinifier() {
+function CodeMinifier({ lang = "es" }) {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("html");
   const [minified, setMinified] = useState("");
@@ -18,6 +19,8 @@ function CodeMinifier() {
   const [showHelp, setShowHelp] = useState(false);
   const [history, setHistory] = useState([]);
   const TOOL_NAME = "code-minifier";
+  const t = translations[lang]?.help?.minifier || {};
+
 
   const cardContainerClasses = "my-8 bg-white p-6 md:p-8 rounded-xl shadow-md sm:shadow-lg space-y-6";
   const toolTitleClasses = "text-2xl font-semibold text-gray-800";
@@ -51,7 +54,7 @@ function CodeMinifier() {
 
   const handleMinify = async () => {
     if (!code.trim()) {
-      setError("❌ El campo de código está vacío.");
+      setError(t.errors.empty);
       return;
     }
 
@@ -90,7 +93,7 @@ function CodeMinifier() {
       setHistory(getHistory(TOOL_NAME));
       
     } catch (err) {
-      setError(`❌ Error al minificar: ${err.message}`);
+    setError(`${t.errors.minifyFail}${err.message}`);
       setMinified("");
     } finally {
       setIsLoading(false);
@@ -124,16 +127,16 @@ useEffect(() => {
   return (
     <div className={cardContainerClasses}>
       <div className="flex justify-between items-center mb-1">
-        <h2 className={toolTitleClasses}>Minificador de Código</h2>
+        <h2 className={toolTitleClasses}>{t.title}</h2>
         
       </div>
       <p className={toolDescriptionClasses}>
-        Reduce el tamaño de tu código HTML, CSS o JavaScript para optimizar la carga.
+{t.subtitle}
       </p>
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="minifier-language" className="block text-sm font-medium text-gray-700 mb-1">Lenguaje:</label>
+          <label htmlFor="minifier-language" className="block text-sm font-medium text-gray-700 mb-1">{t.languageLabel}</label>
           <select
             id="minifier-language"
             value={language}
@@ -148,11 +151,11 @@ useEffect(() => {
         </div>
 
         <div>
-          <label htmlFor="minifier-input" className="block text-sm font-medium text-gray-700 mb-1">Código Original:</label>
+          <label htmlFor="minifier-input" className="block text-sm font-medium text-gray-700 mb-1">{t.inputLabel}</label>
           <textarea
             id="minifier-input"
             className={`${textareaClasses} h-48 ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
-            placeholder={`Pega tu código ${language.toUpperCase()} aquí`}
+            placeholder={t.placeholder[language]}
             value={code}
             onChange={(e) => {
                 setCode(e.target.value);
@@ -177,7 +180,7 @@ useEffect(() => {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             ) : <MinifyIcon />}
-            <span className="ml-2">{isLoading ? "Minificando..." : "Minificar Código"}</span>
+            <span className="ml-2">{isLoading ? t.processing : t.button}</span>
           </button>
           {(code || minified || error) && (
             <button type="button" onClick={handleClearAll} title="Limpiar todo" className="p-2.5 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm ml-auto sm:ml-4 cursor-pointer">
@@ -191,10 +194,10 @@ useEffect(() => {
         {minified && (
           <div>
             <div className="flex justify-between items-center mt-4 mb-1">
-              <label htmlFor="minifier-output" className="block text-sm font-medium text-gray-700">Código Minificado:</label>
+              <label htmlFor="minifier-output" className="block text-sm font-medium text-gray-700">{t.outputLabel}</label>
               <div className="flex gap-2">
                <CopyButton content={minified} buttonText="Copiar código" />
-<DownloadButton content={minified} filename={`minified.${language}`} />
+<DownloadButton content={minified} filename={`minified.${language}`} lang={lang}/>
 
               </div>
             </div>
@@ -211,10 +214,11 @@ useEffect(() => {
           history={history}
           onSelect={handleSelectHistory}
           onClear={handleClearHistory}
+          lang={lang}
         />
       </div>
       {showHelp && (
-        <HelpPopup helpKey="minifier" onClose={() => setShowHelp(false)} />
+        <HelpPopup helpKey="minifier" onClose={() => setShowHelp(false)} lang={lang}/>
       )}
     </div>
   );

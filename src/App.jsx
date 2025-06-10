@@ -14,6 +14,9 @@ import { generateReadme } from "./utils/generateReadme";
 import { saveSnippets, getSnippets } from "./utils/snippetStorage";
 import HelpPanel from './components/HelpPanel'; 
 import FancyButton from "./components/FancyButton";
+import { translations } from "./i18n";
+
+
 
 
 
@@ -51,15 +54,7 @@ const ToolCard = ({ title, description, icon, onClick, isHovered, isDimmed }) =>
 
 // --- Fin Componente ToolCard ---
 
-// --- Lista de herramientas para el menú de navegación ---
-const tools = [
-  { key: 'readme', name: 'Generador README' },
-  { key: 'gitignore', name: 'Generador .gitignore' },
-  { key: 'jsoncsv', name: 'Convertidor JSON ↔ CSV' },
-  { key: 'minifier', name: 'Minificador de Código' },
-  { key: 'githelper', name: 'Ayudante Git' },
-  { key: 'snippeteditor', name: 'Editor de Snippets' },
-];
+
 
 function App() {
   const [activeTool, setActiveTool] = useState(null);
@@ -67,21 +62,33 @@ function App() {
   const [projectTitle, setProjectTitle] = useState("");
   const [snippets, setSnippets] = useState(() => getSnippets());
   const [pantalla, setPantalla] = useState("inicio"); // inicio | herramientas
+  
+
+
 
   const [settings, setSettings] = useState(() => {
     try {
       const storedSettings = localStorage.getItem('devtools-settings');
-      return storedSettings ? JSON.parse(storedSettings) : { theme: 'dark', fontSize: 14 };
+      return storedSettings ? JSON.parse(storedSettings) : { theme: 'dark', fontSize: 14 , language: "es"};
     } catch {
-      return { theme: 'dark', fontSize: 14 };
+      return { theme: 'dark', fontSize: 14, language: "es" };
     }
   });
   const [notification, setNotification] = useState({ message: '', type: null });
-
+const lang = settings.language || "es";
+const t = translations[lang];
   // --- NUEVO: Estado y lógica para el menú desplegable ---
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
-
+// --- Lista de herramientas para el menú de navegación ---
+const tools = [
+  { key: 'readme', name: t.tools.readme },
+  { key: 'gitignore', name: t.tools.gitignore },
+  { key: 'jsoncsv', name: t.tools.jsoncsv },
+  { key: 'minifier', name: t.tools.minifier },
+  { key: 'githelper', name: t.tools.githelper },
+  { key: 'snippeteditor', name: t.tools.snippeteditor },
+];
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -129,12 +136,48 @@ function App() {
 
   const renderActiveTool = () => {
     switch (activeTool) {
-      case 'readme': return ( <div className="flex flex-col lg:flex-row gap-8 transition-opacity duration-500 ease-in-out"><div className="lg:w-1/2 bg-white p-6 md:p-8 rounded-xl shadow-2xl"><h2 className="text-2xl font-semibold text-blue-700 mb-6 border-b pb-3">1. Completa la Información del README</h2><READMEForm onGenerate={handleReadmeGenerate} /></div><div className="lg:w-1/2"><div className="bg-white p-6 md:p-8 rounded-xl shadow-2xl h-full min-h-[500px] flex flex-col"><div className="flex justify-between items-center mb-4 border-b pb-3"><h2 className="text-2xl font-semibold text-blue-700">2. Vista Previa del README</h2>{readmeContent && (<div className="flex items-center gap-3"><CopyButton content={readmeContent} /><DownloadButton content={readmeContent} filename={generatedReadmeFilename} /></div>)}</div>{readmeContent ? (<div className="prose prose-sm sm:prose-base max-w-none flex-grow overflow-y-auto p-3 border border-slate-200 rounded-md bg-slate-50" style={{scrollbarWidth: 'thin'}}><MarkdownPreview content={readmeContent} /></div>) : (<div className="flex-grow flex flex-col justify-center items-center text-center text-slate-500 border-2 border-dashed border-slate-300 rounded-lg p-8"><PreviewIcon /><p className="text-lg font-medium">La vista previa de tu README aparecerá aquí.</p><p className="text-sm mt-2">Completa el formulario de la izquierda.</p></div>)}</div></div></div> );
-      case 'gitignore': return <GitignoreGenerator />;
-      case 'jsoncsv': return <JsonCsvConverter />;
-      case 'minifier': return <CodeMinifier />;
-      case 'githelper': return <GitCommandHelper />;
-      case 'snippeteditor': return <SnippetEditor snippets={snippets} setSnippets={setSnippets} settings={settings} />;
+    case 'readme': return (
+  <div className="flex flex-col lg:flex-row gap-8 transition-opacity duration-500 ease-in-out">
+    <div className="lg:w-1/2 bg-white p-6 md:p-8 rounded-xl shadow-2xl">
+      <h2 className="text-2xl font-semibold text-blue-700 mb-6 border-b pb-3">
+        1. {t.formTitle}
+      </h2>
+      <READMEForm onGenerate={handleReadmeGenerate} lang={lang} />
+    </div>
+    <div className="lg:w-1/2">
+      <div className="bg-white p-6 md:p-8 rounded-xl shadow-2xl h-full min-h-[500px] flex flex-col">
+        <div className="flex justify-between items-center mb-4 border-b pb-3">
+          <h2 className="text-2xl font-semibold text-blue-700">
+            2. {t.previewTitle}
+          </h2>
+          {readmeContent && (
+            <div className="flex items-center gap-3">
+              <CopyButton content={readmeContent} lang={lang} />
+              <DownloadButton content={readmeContent} filename={generatedReadmeFilename} lang={lang} />
+            </div>
+          )}
+        </div>
+        {readmeContent ? (
+          <div className="prose prose-sm sm:prose-base max-w-none flex-grow overflow-y-auto p-3 border border-slate-200 rounded-md bg-slate-50" style={{ scrollbarWidth: 'thin' }}>
+            <MarkdownPreview content={readmeContent} />
+          </div>
+        ) : (
+          <div className="flex-grow flex flex-col justify-center items-center text-center text-slate-500 border-2 border-dashed border-slate-300 rounded-lg p-8">
+            <PreviewIcon />
+            <p className="text-lg font-medium">{t.previewEmpty}</p>
+            <p className="text-sm mt-2">{t.previewInstruction}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+);
+
+      case 'gitignore': return <GitignoreGenerator lang={lang} />;
+      case 'jsoncsv': return <JsonCsvConverter lang={lang}/>;
+      case 'minifier': return <CodeMinifier lang={lang}/>;
+      case 'githelper': return <GitCommandHelper lang={lang}/>;
+      case 'snippeteditor': return <SnippetEditor snippets={snippets} setSnippets={setSnippets} settings={settings} lang={lang} />;
       default: return null;
     }
   };
@@ -156,14 +199,14 @@ const PantallaInicio = () => (
     {/* Contenido superpuesto centrado */}
  <div className="relative z-10 bg-white/70 backdrop-blur-md p-10 rounded-2xl shadow-2xl max-w-3xl text-center flex flex-col items-center">
   <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 mb-6 drop-shadow-sm">
-    Bienvenido a <span className="text-blue-700 text-6xl " ><br />DevTools Express</span>
-  </h1>
+  {t.welcome} <span className="text-blue-700 text-6xl " ><br />DevTools Express</span>
+</h1>
   <p className="text-lg sm:text-xl text-slate-700">
-    Automatiza tareas, crea archivos y acelera tu flujo de trabajo como desarrollador.
+    {t.subtitle}
   </p>
 <div className="mt-8">
   <FancyButton onClick={() => setPantalla("herramientas")}>
-    🚀 Comenzar
+    {t.start}
   </FancyButton>
 </div>
 
@@ -177,27 +220,39 @@ const PantallaInicio = () => (
 
 const PantallaHerramientas = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const getToolIcon = (key) => {
+  switch (key) {
+    case "readme": return <ReadmeIcon />;
+    case "gitignore": return <GitignoreIcon />;
+    case "jsoncsv": return <JsonCsvIcon />;
+    case "minifier": return <CodeMinIcon />;
+    case "githelper": return <GitCmdIcon />;
+    case "snippeteditor": return <SnippetEditorIcon />;
+    default: return null;
+  }
+};
 
-  const cards = [
-    { title: "Generador de README.md", description: "Crea archivos README profesionales y bien estructurados.", icon: <ReadmeIcon />, tool: "readme" },
-    { title: "Generador de .gitignore", description: "Genera archivos .gitignore optimizados para tu proyecto.", icon: <GitignoreIcon />, tool: "gitignore" },
-    { title: "Convertidor JSON ↔ CSV", description: "Transforma datos entre formatos JSON y CSV.", icon: <JsonCsvIcon />, tool: "jsoncsv" },
-    { title: "Minificador de Código", description: "Reduce el tamaño de tu HTML, CSS y JavaScript.", icon: <CodeMinIcon />, tool: "minifier" },
-    { title: "Ayudante Comandos Git", description: "Accede y copia rápidamente los comandos Git más comunes.", icon: <GitCmdIcon />, tool: "githelper" },
-    { title: "Editor de Snippets", description: "Crea, guarda y gestiona tus fragmentos de código reutilizables.", icon: <SnippetEditorIcon />, tool: "snippeteditor" },
-  ];
+const cards = tools.map((tool) => ({
+  title: t.toolDescriptions[tool.key].title,
+  description: t.toolDescriptions[tool.key].description,
+  icon: getToolIcon(tool.key),
+  tool: tool.key,
+}));
+
+
+
 
   return (
     <section className="container mx-auto p-4 sm:p-6 md:p-8 flex-grow">
 <div className="text-center mb-10 sm:mb-12 relative">
   <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-800 mb-2 relative inline-block animate-slide-fade">
-    <span className="relative z-10">Tu Caja de Herramientas</span>
+    <span className="relative z-10">{t.toolboxTitle}</span>
     <span className="absolute top-full left-0 w-full h-full opacity-20 blur-sm transform scale-y-[-1] text-slate-400 pointer-events-none select-none">
-      Tu Caja de Herramientas
+    {t.toolboxTitle}
     </span>
   </h2>
   <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mt-2 animate-fade-in-slow">
-    Selecciona una utilidad para crear, optimizar o automatizar tu trabajo como desarrollador.
+   {t.toolboxSubtitle}
   </p>
 </div>
 
@@ -244,6 +299,16 @@ const PantallaHerramientas = () => {
         DevTools Express
       </h1>
     </div>
+<select
+  value={settings.language || "es"}
+  onChange={(e) =>
+    setSettings({ ...settings, language: e.target.value })
+  }
+  className="bg-blue-600 text-white text-sm px-2 py-1 rounded-md"
+>
+  <option value="es">ES</option>
+  <option value="en">EN</option>
+</select>
 
     {/* --- Menú desplegable --- */}
    <div className="flex items-center gap-4">
@@ -286,7 +351,8 @@ const PantallaHerramientas = () => {
         onClick={handleGoToToolbox}
         className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        ← Volver al Toolbox
+      {t.back}
+
       </button>
     </>
   )}
@@ -309,12 +375,13 @@ const PantallaHerramientas = () => {
   <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
     
     <div className="text-sm text-center sm:text-left">
-      <p>
-        &copy; {new Date().getFullYear()} <strong className="text-white">DevTools Express</strong>. Desarrollado por Iker Domínguez.
-      </p>
-      <p className="text-xs text-slate-400">
-        Herramientas para optimizar tu flujo de desarrollo.
-      </p>
+    <p>
+  &copy; {new Date().getFullYear()} <strong className="text-white">DevTools Express</strong>. {t.footer.credits}
+</p>
+<p className="text-xs text-slate-400">
+  {t.footer.description}
+</p>
+
     </div>
 
     <div className="flex items-center gap-4">
@@ -327,7 +394,7 @@ const PantallaHerramientas = () => {
         GitHub
       </a>
      
-      <HelpPanel />
+      <HelpPanel lang={lang}/>
     </div>
 
   </div>

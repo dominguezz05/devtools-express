@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { translations } from "../i18n"; 
 
 // --- Icons ---
 const CopyIcon = () => (
@@ -19,74 +20,68 @@ const ErrorIcon = () => (
   </svg>
 );
 
-function CopyButton({ content, buttonText = "Copiar Markdown", successText = "¡Copiado!", errorText = "Error al copiar" }) {
-  const [status, setStatus] = useState("idle"); // 'idle', 'copied', 'error'
+function CopyButton({ content, lang = "es" }) {
+  const t = translations[lang]?.copy || translations["es"].copy;
+
+  const [status, setStatus] = useState("idle");
   const [liveRegionMessage, setLiveRegionMessage] = useState("");
   const timeoutRef = useRef(null);
 
   const handleCopy = async () => {
-    if (!content || status === "copied" || status === "error") return; // Prevent multiple clicks while in a temporary state
+    if (!content || status === "copied" || status === "error") return;
 
     try {
       await navigator.clipboard.writeText(content);
       setStatus("copied");
-      setLiveRegionMessage("Contenido copiado al portapapeles.");
+      setLiveRegionMessage(t.success);
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
       setStatus("error");
-      setLiveRegionMessage("Error al copiar al portapapeles.");
+      setLiveRegionMessage(t.error);
     }
   };
 
   useEffect(() => {
     if (status === "copied" || status === "error") {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         setStatus("idle");
-        setLiveRegionMessage(""); // Clear message after timeout
-      }, 2500); // Reset after 2.5 seconds
+        setLiveRegionMessage("");
+      }, 2500);
     }
 
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
+    return () => clearTimeout(timeoutRef.current);
   }, [status]);
 
-  let currentIcon;
-  let currentText;
-  let currentBgColors;
+  let currentIcon, currentText, currentBgColors;
 
   switch (status) {
     case "copied":
       currentIcon = <CheckIcon />;
-      currentText = successText;
+      currentText = t.success;
       currentBgColors = "bg-green-600 hover:bg-green-700 text-white focus:ring-green-500";
       break;
     case "error":
       currentIcon = <ErrorIcon />;
-      currentText = errorText;
+      currentText = t.error;
       currentBgColors = "bg-red-600 hover:bg-red-700 text-white focus:ring-red-500";
       break;
-    default: // idle
+    default:
       currentIcon = <CopyIcon />;
-      currentText = buttonText;
+      currentText = t.button;
       currentBgColors = "bg-slate-600 hover:bg-slate-700 text-white focus:ring-slate-500";
   }
 
   return (
     <>
       <button
-        type="button" 
+        type="button"
         onClick={handleCopy}
-        disabled={!content || status !== "idle"} 
-        className={`flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
+        disabled={!content || status !== "idle"}
+        className={`flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer
           ${currentBgColors}
           ${(!content || status !== 'idle') ? "opacity-75 cursor-not-allowed" : ""}`}
-        aria-describedby="copy-status-message" 
+        aria-describedby="copy-status-message"
       >
         {currentIcon}
         <span className="ml-2">{currentText}</span>

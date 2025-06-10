@@ -1,11 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Info, X } from "lucide-react";
+import { translations } from "../i18n";
 
-function HelpPanel() {
+function HelpPanel({ lang }) {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef(null);
   const panelRef = useRef(null);
+
+  // Obtener idioma desde localStorage (puedes adaptarlo si ya usas context)
+  
+  const t = translations[lang].help;
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -46,7 +51,7 @@ function HelpPanel() {
         <div className="flex justify-between items-center p-4 border-b">
           <h2 id="help-panel-title" className="text-xl font-semibold text-slate-800 flex items-center gap-2">
             <Info className="w-6 h-6 text-blue-600" />
-            Guía Rápida de Uso
+            {t.title}
           </h2>
           <button
             onClick={() => setIsOpen(false)}
@@ -60,35 +65,37 @@ function HelpPanel() {
         <div className="p-6 overflow-y-auto flex-grow scrollbar-thin scrollbar-thumb-gray-300 max-h-screen">
           <section className="space-y-6 text-sm text-slate-700">
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Uso Básico</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">{t.basicUsageTitle}</h3>
               <ol className="list-decimal pl-5 space-y-1">
-                <li>Selecciona una herramienta desde la pantalla principal.</li>
-                <li>Introduce datos o código en el área correspondiente.</li>
-                <li>Haz clic en el botón principal para ejecutar la herramienta.</li>
-                <li>Visualiza, copia o descarga el resultado generado.</li>
+                {t.basicUsage.map((step, i) => (
+                  <li key={i}>{step}</li>
+                ))}
               </ol>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Historial y Persistencia</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">{t.persistenceTitle}</h3>
               <ul className="list-disc pl-5 space-y-1">
-                <li>El historial de entradas se guarda localmente en el navegador.</li>
-                <li>Los snippets se guardan automáticamente y se restauran al volver.</li>
+                {t.persistence.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Configuración de snippets</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">{t.snippetsTitle}</h3>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Usa <strong>Exportar Snippets</strong> para tener tus snippets en un  <code>.json</code>.</li>
-                <li>Usa <strong>Importar Snippets</strong> para insertarlos desde un archivo <code>.json</code>.</li>
+                {t.snippets.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Atajo de Teclado</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">{t.shortcutTitle}</h3>
               <p>
-                Pulsa <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded">Esc</kbd> para cerrar esta ayuda.
+                {t.shortcutInstruction.replace("ESC", "")}
+                <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded">Esc</kbd>
               </p>
             </div>
           </section>
@@ -99,20 +106,21 @@ function HelpPanel() {
   );
 
   return (
-    <>
-      <button
-        ref={triggerRef}
-        onClick={() => setIsOpen(true)}
-        className="text-sm text-blue-500 hover:text-blue-800 hover:underline inline-flex items-center gap-1.5 p-2 rounded-md transition-colors hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        title="Guía rápida"
-      >
-        <Info className="w-4 h-4" />
-        ¿Necesitas ayuda?
-      </button>
+  <>
+    <button
+      ref={triggerRef}
+      onClick={() => setIsOpen(true)}
+      className=" cursor-pointer text-sm text-blue-500 hover:text-blue-800 hover:underline inline-flex items-center gap-1.5 p-2 rounded-md transition-colors hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      title={t.title}
+    >
+      <Info className="w-4 h-4" />
+      {t.button}
+    </button>
 
-      {panelContent}
-    </>
-  );
+    {panelContent}
+  </>
+);
+
 }
 
 export default HelpPanel;
